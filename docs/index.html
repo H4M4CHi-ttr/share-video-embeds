@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="YouTubeの動画URLを/live/へ変換し、ブラウザ内のiframeで再生確認。サーバー・APIキー不要。日本語と英語に対応。">
+  <meta name="theme-color" content="#1758d6">
+  <title>YouTube Live Link — Browser edition</title>
+  <link rel="icon" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="YouTube Live Link">
+        <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m10 15-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m1 3 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0M8 16l8-8"/></svg></span>
+        <span>YouTube <strong>Live Link</strong><small data-i18n="subtitle"></small></span>
+      </a>
+      <select id="language" aria-label="Language / 言語"><option value="ja">日本語</option><option value="en">English</option></select>
+    </header>
+    <main>
+      <div class="intro">
+        <h1><span data-i18n="heading1"></span><span data-i18n="heading2"></span></h1>
+        <p data-i18n="intro"></p>
+      </div>
+      <div class="workspace">
+        <div class="main-column">
+          <section class="converter" aria-labelledby="input-label">
+            <form id="converter-form" novalidate>
+              <div class="field-heading"><label for="video-url" id="input-label" data-i18n="inputLabel"></label><button type="button" class="text-button" id="example" data-i18n="example"></button></div>
+              <div class="input-wrap"><input type="text" inputmode="url" id="video-url" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="4096" placeholder="https://www.youtube.com/watch?v=…" aria-describedby="input-hint"><button type="button" class="clear-button" id="clear" data-i18n="clear" hidden></button></div>
+              <p id="input-hint" class="field-hint" data-i18n="inputHint"></p>
+              <p id="input-error" class="error-text" role="alert" hidden></p>
+              <label class="tracking-control"><input type="checkbox" id="strip-tracking"><span><strong data-i18n="strip"></strong><small data-i18n="stripHint"></small></span></label>
+              <p class="tracking-detail" data-i18n="stripDetail"></p>
+              <div class="convert-row"><span class="local-note" data-i18n="local"></span><button type="submit" class="button primary" data-i18n="convert"></button></div>
+            </form>
+            <div id="output-panel" class="conversion-output" hidden>
+              <h2 id="output-label" data-i18n="output"></h2>
+              <textarea id="converted-url" aria-labelledby="output-label" readonly rows="2"></textarea>
+              <p id="removed-info" class="removed-info"></p>
+              <div class="output-actions"><button type="button" id="copy" class="button primary" data-i18n="copy"></button><a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="open"></a></div>
+            </div>
+            <p id="notice" class="notice" role="status"></p>
+          </section>
+
+          <section class="preview-panel" aria-labelledby="preview-title">
+            <div class="section-heading"><h2 id="preview-title" data-i18n="previewTitle"></h2><span class="edition-label">Browser edition</span></div>
+            <div class="preview-content">
+              <div class="limit-inline"><span aria-hidden="true">i</span><p data-i18n="noX"></p></div>
+              <div id="empty-preview" class="empty-state"><span class="play-symbol" aria-hidden="true">▶</span><h3 data-i18n="emptyTitle"></h3><p data-i18n="emptyBody"></p></div>
+              <div id="player-host" class="player-host" hidden></div>
+              <div id="player-status" class="player-status" role="status" hidden><strong id="status-title"></strong><p id="status-body"></p><p id="player-error-code" class="error-code"></p></div>
+              <div id="playback-proof" class="playback-proof" hidden><strong data-i18n="proof"></strong><small data-i18n="evidence"></small></div>
+              <div class="player-actions">
+                <button type="button" id="load-player" class="button primary" data-i18n="show" disabled></button>
+                <button type="button" id="play-muted" class="button secondary" data-i18n="testPlay" disabled hidden></button>
+                <button type="button" id="unload-player" class="text-button" data-i18n="unload" hidden></button>
+              </div>
+              <p class="privacy-note" data-i18n="privacy"></p>
+              <details id="embed-details" hidden><summary data-i18n="embedSource"></summary><code id="embed-url"></code></details>
+            </div>
+          </section>
+        </div>
+        <aside class="guide">
+          <section>
+            <div class="diagram" aria-hidden="true"><span>youtube.com</span><div><code>/watch?v=</code><span>→</span><code class="live-path">/live/</code></div><small data-i18n="sameId"></small></div>
+            <h2 data-i18n="howTitle"></h2><p data-i18n="howBody"></p>
+          </section>
+          <section class="limit-note"><h2 data-i18n="limitTitle"></h2><p data-i18n="limitBody"></p></section>
+          <details><summary data-i18n="whyTitle"></summary><p data-i18n="whyBody"></p></details>
+          <details><summary data-i18n="settingsTitle"></summary><p data-i18n="settingsBody"></p></details>
+        </aside>
+      </div>
+      <noscript>JavaScriptを有効にしてください。 / Enable JavaScript to convert links and load the player.</noscript>
+    </main>
+    <footer><span data-i18n="footer"></span><nav><a href="https://github.com/H4M4CHi-ttr/youtube-live-link-pages" target="_blank" rel="noopener noreferrer" data-i18n="source"></a><a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer" data-i18n="docs"></a></nav></footer>
+  </div>
+</body>
+</html>
