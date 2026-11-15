@@ -12,7 +12,9 @@ const content = new Map(await Promise.all(SITE_FILES.map(async file => {
 const previewTest = process.argv.includes('--preview-test');
 const html = content.get('index.html').toString('utf8');
 if (previewTest) {
-  content.set('index.html', Buffer.from(html.replace('<html lang="ja">', '<html lang="ja" data-preview-test="true">')));
+  const previewHtml = html.replace('<html lang="ja">', '<html lang="ja" data-preview-test="true">')
+    .replace(/\s*<!-- Cloudflare Web Analytics -->[\s\S]*?<!-- End Cloudflare Web Analytics -->/u, '');
+  content.set('index.html', Buffer.from(previewHtml));
 }
 assert.match(html, /type="module" src="\.\/app.mjs"/);
 assert.match(html, /<link rel="manifest" href="\.\/manifest\.webmanifest">/);
