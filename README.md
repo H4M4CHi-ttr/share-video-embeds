@@ -24,21 +24,12 @@ YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開
 
 共有先に表示されないときは、ChromeでWebアプリをインストールできているか（ホーム画面のブックマークだけになっていないか）確認してください。[Chromeの共有受信の資料](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
 
-## iOS
+## iPhone・iPad
 
-Safariでは「共有」から「ホーム画面に追加」を選びます。「Webアプリとして開く」が表示される場合はオンにして追加します。共有シートでYouTubeのURLを受け取る機能は、Appleの「ショートカット」アプリで設定します。[ホーム画面に追加する手順](https://support.apple.com/guide/iphone/iphea86e5236/ios)・[共有シートからショートカットを実行する手順](https://support.apple.com/ja-jp/guide/shortcuts/apd163eb9f95/ios)
+1. [日本語の共有ショートカット](https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5)をiPhoneまたはiPadで開き、「ショートカットを取得」をタップします。[英語版もあります](https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a)。
+2. YouTubeの共有メニューで「YouTubeをXに埋め込み」を選ぶと、ツールの変換結果が開きます。
 
-1. 「ショートカット」で新規ショートカットを作り、詳細で「共有シートに表示」をオンにします。受け取る種類は「URL」と「テキスト」にします。
-2. 「テキストを結合」に「ショートカットの入力」を渡し、区切りを改行にします。
-3. 「URLエンコード」で結合したテキスト全体を1回エンコードします。
-4. 「テキスト」アクションに `https://h4m4chi-ttr.github.io/share-video-embeds/#text=` と入力し、直後にエンコード結果の変数を挿入します。間に空白や改行は入れません。
-5. 「URLを開く」に手順4のテキストを渡します。ブラウザでページが開くと変換が実行されます。「URLの内容を取得」はHTMLを取得する操作で、ページ内の変換は実行されません。
-
-YouTubeの共有シートから作成したショートカットを選び、ブラウザに表示された変換URLを使ってください。
-
-### iCloud共有リンクの設定
-
-作成したショートカットの共有メニューで「iCloudリンクをコピー」を選びます。取得した `https://www.icloud.com/shortcuts/…` を [`docs/settings.mjs`](docs/settings.mjs) の `IOS_SHORTCUT_URL` に設定します。次回のビルドと公開以降、有効なリンクが設定されていれば「iCloudからショートカットを追加」が表示されます。空欄のときは上の手動手順を使えます。[Appleのショートカット共有ガイド](https://support.apple.com/ja-jp/guide/shortcuts/apdf01f8c054/ios)
+iPhone・iPadでツールを直接開くと、画面下の案内から表示言語に合ったショートカットを追加できます。[Appleの共有ショートカットガイド](https://support.apple.com/ja-jp/guide/shortcuts/apdf01f8c054/ios)
 
 ## 共有入力の仕様
 

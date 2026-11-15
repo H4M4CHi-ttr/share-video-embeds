@@ -37,12 +37,9 @@ test('manifest starts in the project and shares into the existing page', async (
   for (const name of SHELL_FILES) await readFile(new URL(name, source));
 });
 
-test('iOS install link stays absent until an actual HTTPS iCloud shortcut link is configured', () => {
-  assert.equal(iosShortcutLink(''), null);
-  assert.equal(iosShortcutLink('https://www.icloud.com/shortcuts/some-id'), 'https://www.icloud.com/shortcuts/some-id');
-  for (const url of ['http://www.icloud.com/shortcuts/x', 'https://www.icloud.com.example/shortcuts/x', 'https://example@www.icloud.com/shortcuts/x', 'https://www.icloud.com/shortcuts/', 'javascript:alert(1)']) {
-    assert.equal(iosShortcutLink(url), null);
-  }
+test('iOS installation links match the selected language', () => {
+  assert.equal(iosShortcutLink('ja'), 'https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5');
+  assert.equal(iosShortcutLink('en'), 'https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a');
 });
 
 async function worker() {

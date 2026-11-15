@@ -27,16 +27,10 @@ export function savePrivacyAgreement(storage) {
   catch { /* Agreement still applies to the current page. */ }
 }
 
-// Set this to the published iCloud link to show the shortcut installation link.
-const IOS_SHORTCUT_URL = '';
-
-export function iosShortcutLink(value = IOS_SHORTCUT_URL) {
-  try {
-    const url = new URL(value);
-    if (url.origin === 'https://www.icloud.com' && !url.username && !url.password
-        && /^\/shortcuts\/[a-z0-9-]+\/?$/i.test(url.pathname)) return url.href;
-  } catch { /* An unconfigured link leaves the manual steps visible. */ }
-  return null;
+export function iosShortcutLink(language) {
+  return language === 'ja'
+    ? 'https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5'
+    : 'https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a';
 }
 
 export function readTrackingPreference(storage) {

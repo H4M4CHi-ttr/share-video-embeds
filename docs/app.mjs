@@ -30,6 +30,13 @@ let previewTimer;
 let previewAbort;
 let noticeKey = '';
 let inputError = '';
+const onIos = /iPad|iPhone|iPod/i.test(navigator.userAgent)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const onAndroid = /Android/i.test(navigator.userAgent)
+  || navigator.userAgentData?.platform === 'Android';
+let installed = window.matchMedia?.('(display-mode: standalone)').matches ?? false;
+let openedFromShare = false;
+let installDismissed = false;
 let policyAccepted = !previewTest || hasPrivacyAgreement(storage);
 strip.checked = readTrackingPreference(storage);
 autoPreview.checked = previewTest && readAutoPreviewPreference(storage);
@@ -42,6 +49,8 @@ function translate() {
     byId(id).href = './privacy.html#' + language;
   }
   byId('language').value = language;
+  for (const id of ['ios-shortcut', 'install-shortcut']) byId(id).href = iosShortcutLink(language);
+  byId('dismiss-install').setAttribute('aria-label', t.dismissInstall);
   for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t[el.dataset.i18n];
   const frame = host.querySelector('iframe');
   if (frame) frame.title = t.iframeTitle;
@@ -85,6 +94,21 @@ function renderAccess() {
   byId('converter-workspace').hidden = !policyAccepted;
   byId('preview-options').hidden = !previewTest;
   byId('preview-guide').hidden = !previewTest;
+  renderMobileInstall();
+}
+
+function renderMobileInstall() {
+  const visible = policyAccepted && !openedFromShare && !installDismissed;
+  const shortcut = byId('install-shortcut');
+  const app = byId('install-share-app');
+  shortcut.hidden = !visible || !onIos;
+  app.hidden = !visible || !onAndroid || installed;
+  byId('mobile-install').hidden = shortcut.hidden && app.hidden;
+}
+
+function dismissInstallBar() {
+  installDismissed = true;
+  renderMobileInstall();
 }
 
 function renderPlayback() {
@@ -149,6 +173,8 @@ function importSharedInput() {
   if (!policyAccepted) return;
   const shared = readSharedInput(location.href);
   if (!shared) return;
+  openedFromShare = true;
+  renderMobileInstall();
   window.history.replaceState(window.history.state, '', shared.cleanUrl);
   postTitle.value = shared.title ?? '';
   input.value = shared.input ?? '';
@@ -332,21 +358,29 @@ window.addEventListener('beforeinstallprompt', event => {
 window.addEventListener('appinstalled', () => {
   installPrompt = null;
   installButton.hidden = true;
+  installed = true;
+  renderMobileInstall();
 });
-installButton.addEventListener('click', async () => {
-  if (!installPrompt) return;
+
+async function installShareApp() {
   const prompt = installPrompt;
   installPrompt = null;
   installButton.hidden = true;
-  try { await prompt.prompt(); }
-  catch { /* The Chrome menu remains available as a fallback. */ }
-});
-
-const shortcut = iosShortcutLink();
-if (shortcut) {
-  byId('ios-shortcut').href = shortcut;
-  byId('ios-shortcut').hidden = false;
+  if (prompt) {
+    try {
+      await prompt.prompt();
+      return;
+    } catch { /* The Chrome menu is still available. */ }
+  }
+  dismissInstallBar();
+  const guide = byId('mobile-setup');
+  guide.open = true;
+  guide.scrollIntoView({ block: 'start', behavior: 'instant' });
 }
+
+installButton.addEventListener('click', installShareApp);
+byId('install-share-app').addEventListener('click', installShareApp);
+byId('dismiss-install').addEventListener('click', dismissInstallBar);
 
 window.addEventListener('pagehide', unload);
 window.addEventListener('hashchange', importSharedInput);

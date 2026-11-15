@@ -21,12 +21,13 @@ class Element extends EventTarget {
 const origin = 'http://127.0.0.1:5188/share-video-embeds/';
 const publicOrigin = 'https://h4m4chi-ttr.github.io/share-video-embeds/';
 let serial = 0;
-async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true } = {}) {
+async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true, device = {}, standalone = false } = {}) {
   t.mock.timers.enable({ apis: ['setTimeout'] });
   const elements = new Map();
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
   const created = [];
   const window = new EventTarget();
+  window.matchMedia = query => ({ matches: standalone && query === '(display-mode: standalone)' });
   const saved = [], clipboardWrites = [], shareCalls = [];
   const scripts = new Element('head');
   const location = new URL(href);
@@ -47,7 +48,7 @@ async function mount(t, { href = origin, share, playerApi = true, previewTest = 
   globalThis.window = window;
   globalThis.document = { getElementById: get, createElement: tag => new Element(tag), querySelectorAll: () => [], documentElement: { dataset: { previewTest: previewTest ? 'true' : '' } }, head: scripts };
   globalThis.location = location;
-  const navigator = { language: 'ja', clipboard: { readText() { assert.fail('Clipboard was read without user action'); }, async writeText(value) { clipboardWrites.push(value); } } };
+  const navigator = { language: 'ja', ...device, clipboard: { readText() { assert.fail('Clipboard was read without user action'); }, async writeText(value) { clipboardWrites.push(value); } } };
   if (share !== null) navigator.share = share ?? (async data => { shareCalls.push(data); });
   Object.defineProperty(globalThis, 'navigator', { configurable: true, value: navigator });
   await import('../docs/app.mjs?auto-test=' + ++serial);
@@ -349,9 +350,68 @@ test('canceling the share sheet leaves feedback clear', async t => {
   assert.equal(ui.get('notice').textContent, '');
 });
 
+test('the direct iPadOS install bar follows the selected shortcut language and hides on share', async t => {
+  const ui = await mount(t, { href: publicOrigin, device: { platform: 'MacIntel', maxTouchPoints: 5 } });
+  assert.equal(ui.get('mobile-install').hidden, false);
+  assert.equal(ui.get('install-shortcut').hidden, false);
+  assert.equal(ui.get('install-share-app').hidden, true);
+  const japanese = 'https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5';
+  assert.equal(ui.get('install-shortcut').href, japanese);
+  assert.equal(ui.get('ios-shortcut').href, japanese);
+
+  ui.get('language').value = 'en';
+  ui.get('language').fire('change');
+  const english = 'https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a';
+  assert.equal(ui.get('install-shortcut').href, english);
+  assert.equal(ui.get('ios-shortcut').href, english);
+
+  ui.hash('#text=' + encodeURIComponent('https://youtu.be/b7xXmTfcGMQ'));
+  assert.equal(ui.get('mobile-install').hidden, true);
+  assert.equal(ui.get('output-panel').hidden, false);
+});
+
+test('the Android tablet install bar opens the browser prompt only on click', async t => {
+  const ui = await mount(t, { href: publicOrigin, device: { userAgentData: { platform: 'Android' } } });
+  assert.equal(ui.get('mobile-install').hidden, false);
+  assert.equal(ui.get('install-share-app').hidden, false);
+  assert.equal(ui.get('install-shortcut').hidden, true);
+  const event = new Event('beforeinstallprompt', { cancelable: true });
+  const prompt = t.mock.fn(async () => {});
+  event.prompt = prompt;
+  ui.window.dispatchEvent(event);
+  assert.equal(prompt.mock.callCount(), 0);
+
+  ui.get('install-share-app').fire('click');
+  await ui.tick(0);
+  assert.equal(prompt.mock.callCount(), 1);
+  ui.window.dispatchEvent(new Event('appinstalled'));
+  assert.equal(ui.get('mobile-install').hidden, true);
+});
+
+test('the Android install bar opens instructions if there is no browser prompt', async t => {
+  const ui = await mount(t, { href: publicOrigin, device: { userAgent: 'Android' } });
+  ui.get('install-share-app').fire('click');
+  assert.equal(ui.get('mobile-install').hidden, true);
+  assert.equal(ui.get('mobile-setup').open, true);
+});
+
+test('Android share launches skip the install bar', async t => {
+  const ui = await mount(t, {
+    href: publicOrigin + '?url=' + encodeURIComponent('https://youtu.be/b7xXmTfcGMQ'),
+    device: { userAgent: 'Android' },
+  });
+  assert.equal(ui.get('mobile-install').hidden, true);
+  assert.equal(ui.get('output-panel').hidden, false);
+});
+
+test('an installed Android app opened directly skips the install bar', async t => {
+  const ui = await mount(t, { href: publicOrigin, device: { userAgent: 'Android' }, standalone: true });
+  assert.equal(ui.get('mobile-install').hidden, true);
+});
+
 test('calls the browser installation prompt only from the install button', async t => {
   const ui = await mount(t);
-  assert.equal(ui.get('ios-shortcut').href, undefined);
+  assert.equal(ui.get('mobile-install').hidden, true);
   const promptEvent = new Event('beforeinstallprompt', { cancelable: true });
   let calls = 0;
   promptEvent.prompt = async () => { calls++; };

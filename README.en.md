@@ -24,21 +24,12 @@ Edit the optional post title in the app. Leaving the title blank shares only the
 
 If the app is missing from the share menu, check that Chrome installed the web app as an app. A Home Screen bookmark alone is insufficient. [Chrome’s Web Share Target guide](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
 
-## iOS
+## iPhone and iPad
 
-In Safari’s share menu, choose “Add to Home Screen” and enable “Open as Web App” if shown. Set up an Apple shortcut separately to receive URLs from the share sheet. [Safari Home Screen guide](https://support.apple.com/guide/iphone/iphea86e5236/ios) · [Apple’s guide to running shortcuts from the share sheet](https://support.apple.com/guide/shortcuts/launch-a-shortcut-from-another-app-apd163eb9f95/ios)
+1. Open the [English sharing shortcut](https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a) on your iPhone or iPad and tap “Get Shortcut”. The [Japanese version](https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5) is also available.
+2. Choose “Embed YouTube on X” from YouTube’s share sheet to open the converted link in the tool.
 
-1. Create a shortcut in the Shortcuts app. In its details, turn on “Show in Share Sheet” and accept URLs and Text.
-2. Pass “Shortcut Input” to “Combine Text” and use new lines as the separator.
-3. Pass the combined text through “URL Encode” once.
-4. In a “Text” action, enter `https://h4m4chi-ttr.github.io/share-video-embeds/#text=` and append the encoded result immediately after it. Leave no space or line break between them.
-5. Pass that text to “Open URLs”. The browser runs the conversion when it opens the page. “Get Contents of URL” retrieves the HTML and does not run the page’s JavaScript.
-
-Select the shortcut from YouTube’s share sheet and use the converted URL displayed in the browser.
-
-### Configure the iCloud shortcut link
-
-In the shortcut’s share menu, choose “Copy iCloud Link”. Set `IOS_SHORTCUT_URL` in [`docs/settings.mjs`](docs/settings.mjs) to the resulting `https://www.icloud.com/shortcuts/…` link. After the next build and deployment, a valid link enables “Add shortcut from iCloud”. With the setting empty, the manual steps are available on the page. [Apple’s guide to sharing shortcuts](https://support.apple.com/guide/shortcuts/share-shortcuts-apdf01f8c054/ios)
+When you open the tool directly on an iPhone or iPad, the install banner links to the shortcut for the selected language. [Apple’s guide to shared shortcuts](https://support.apple.com/guide/shortcuts/share-shortcuts-apdf01f8c054/ios)
 
 ## Shared input interface
 

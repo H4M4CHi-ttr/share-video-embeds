@@ -35,18 +35,24 @@
     </header>
     <main>
       <div class="intro">
-        <h1><span data-i18n="heading1"></span><span data-i18n="heading2"></span></h1>
-        <figure class="post-preview" aria-hidden="true">
-          <figcaption data-i18n="postExample"></figcaption>
-          <div class="post-preview-player">
-            <div class="post-preview-scene"></div>
-            <div class="post-preview-controls">
-              <span class="post-preview-pause"></span>
-              <span class="post-preview-track"></span>
-              <span>YouTube</span>
+        <article class="post-preview" aria-labelledby="intro-title">
+          <span class="post-preview-avatar" aria-hidden="true"></span>
+          <div>
+            <div class="post-preview-byline">
+              <strong>You</strong>
+              <span data-i18n="postExample"></span>
+            </div>
+            <h1 id="intro-title" data-i18n="heading"></h1>
+            <div class="post-preview-player" aria-hidden="true">
+              <div class="post-preview-scene"></div>
+              <div class="post-preview-controls">
+                <span class="post-preview-pause"></span>
+                <span class="post-preview-track"></span>
+                <span>YouTube</span>
+              </div>
             </div>
           </div>
-        </figure>
+        </article>
       </div>
       <section id="privacy-consent" class="converter privacy-consent" aria-labelledby="privacy-consent-title" hidden>
         <h2 id="privacy-consent-title" data-i18n="consentTitle"></h2>
@@ -119,22 +125,15 @@
             <h2 data-i18n="guideTitle"></h2>
             <ol class="quick-steps"><li data-i18n="stepPaste"></li><li data-i18n="stepCopy"></li><li data-i18n="stepPost"></li></ol>
           </section>
-          <details class="mobile-setup">
+          <details id="mobile-setup" class="mobile-setup">
             <summary data-i18n="mobileTitle"></summary>
             <h3>Android Chrome</h3>
             <button type="button" id="pwa-install" class="button secondary" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="installApp"></span></button>
             <p data-i18n="androidInstall"></p>
             <p data-i18n="androidShare"></p>
             <h3>iPhone / iPad</h3>
-            <p data-i18n="iosHome"></p>
             <p data-i18n="iosShare"></p>
-            <a id="ios-shortcut" target="_blank" rel="noopener noreferrer" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="addShortcut"></span></a>
-            <ol class="quick-steps">
-              <li data-i18n="iosAccept"></li>
-              <li data-i18n="iosEncode"></li>
-              <li><span data-i18n="iosAppend"></span><code>https://h4m4chi-ttr.github.io/share-video-embeds/#text=</code></li>
-              <li data-i18n="iosOpen"></li>
-            </ol>
+            <a id="ios-shortcut" class="button secondary" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="installShortcut"></span></a>
             <p data-i18n="offlineUse"></p>
           </details>
           <details><summary data-i18n="howTitle"></summary><div class="diagram" aria-hidden="true"><span>youtube.com</span><div><code>/watch?v=</code><span>→</span><code class="live-path">/live/</code></div><small data-i18n="sameId"></small></div><p data-i18n="howBody"></p></details>
@@ -154,6 +153,11 @@
         <a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-book"></use></svg><span data-i18n="docs"></span></a>
       </nav>
     </footer>
+    <div id="mobile-install" class="install-bar" hidden>
+      <a id="install-shortcut" class="button primary" target="_blank" rel="noopener noreferrer" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="installShortcut"></span></a>
+      <button id="install-share-app" class="button primary" type="button" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="installShareApp"></span></button>
+      <button id="dismiss-install" class="install-dismiss" type="button"><span aria-hidden="true">×</span></button>
+    </div>
   </div>
 </body>
 </html>
