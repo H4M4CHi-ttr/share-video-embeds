@@ -37,7 +37,7 @@ autoPreview.checked = previewTest && readAutoPreviewPreference(storage);
 function translate() {
   const t = strings[language];
   document.documentElement.lang = language;
-  document.title = 'Live Link Converter';
+  document.title = 'Share Video Embeds';
   for (const id of ['privacy-link', 'consent-privacy-link']) {
     byId(id).href = './privacy.html#' + language;
   }

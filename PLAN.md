@@ -1,4 +1,4 @@
-# Live Link Converter
+# Share Video Embeds
 The user requested a separate public GitHub Pages tool with no inspection server. Preserve the existing Sites app.
 Use buildless HTML/CSS/ES modules, official YouTube iframe embeds and the IFrame Player API. Reuse the existing strict URL converter; do not include metadata fetching or Card classification. A PLAYING event confirms playback started on this page, not X Card support.
 User correction: tracking removal defaults OFF, with ON/OFF stored in localStorage and safely restored; unavailable storage does not break the tool.

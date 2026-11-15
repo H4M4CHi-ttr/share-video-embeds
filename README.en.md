@@ -1,4 +1,4 @@
-# Live Link Converter
+# Share Video Embeds
 
 [Open the tool](https://h4m4chi-ttr.github.io/youtube-to-x-player/) · [日本語](README.md)
 
@@ -20,7 +20,7 @@ Edit the optional post title in the app. Leaving the title blank shares only the
 
 1. Open the [tool](https://h4m4chi-ttr.github.io/youtube-to-x-player/) in Chrome on Android.
 2. Open “Use from your phone’s share menu” and select “Install app”. If the button is unavailable, use “Install app” or the install option under “Add to Home screen” in Chrome’s menu. The label depends on the Chrome version.
-3. In YouTube or another app, open the share menu and select “Live Link Converter” (short name: “Live Links”). Copy the result or select “Share converted URL” and pick a destination when your device supports it.
+3. In YouTube or another app, open the share menu and select “Share Video Embeds” (short name: “Video Embeds”). Copy the result or select “Share converted URL” and pick a destination when your device supports it.
 
 If the app is missing from the share menu, check that Chrome installed the web app as an app. A Home Screen bookmark alone is insufficient. [Chrome’s Web Share Target guide](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
 
@@ -56,7 +56,7 @@ The build identifies each version from the app files and the service worker cach
 
 ## Device checks
 
-- On Android Chrome, install the app and check that “Live Link Converter” appears when sharing from YouTube. Verify the converted link appears, the outgoing share contains the `/live/` video URL, and canceling a share shows no error.
+- On Android Chrome, install the app and check that “Share Video Embeds” appears when sharing from YouTube. Verify the converted link appears, the outgoing share contains the `/live/` video URL, and canceling a share shows no error.
 - On iPhone or iPad, create the shortcut and try both a URL and shared text containing a title, a new line, and a URL. Check the conversion and repeat the share to the same page.
 - On both, check conversion after opening from a share. After the browser caches the app, reopen it in airplane mode and test conversion.
 

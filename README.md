@@ -1,4 +1,4 @@
-# Live Link Converter
+# Share Video Embeds
 
 [ツールを開く](https://h4m4chi-ttr.github.io/youtube-to-x-player/) · [English](README.en.md)
 
@@ -20,7 +20,7 @@ YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開
 
 1. AndroidのChromeで[ツール](https://h4m4chi-ttr.github.io/youtube-to-x-player/)を開きます。
 2. 「スマホの共有メニューから使う」を開き、「アプリをインストール」を押します。ボタンがなければ、Chromeのメニューにある「アプリをインストール」か「ホーム画面に追加」のインストール項目を使います。表示名はChromeのバージョンによって異なります。
-3. YouTubeなどで「共有」を開き、共有先から「Live Link Converter」を選びます。短い表示名は「Live Links」です。変換されたURLをコピーするか、対応端末では「変換URLを共有」を押して送り先を選びます。
+3. YouTubeなどで「共有」を開き、共有先から「Share Video Embeds」を選びます。短い表示名は「Video Embeds」です。変換されたURLをコピーするか、対応端末では「変換URLを共有」を押して送り先を選びます。
 
 共有先に表示されないときは、ChromeでWebアプリをインストールできているか（ホーム画面のブックマークだけになっていないか）確認してください。[Chromeの共有受信の資料](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
 
@@ -56,7 +56,7 @@ YouTubeの共有シートから作成したショートカットを選び、ブ�
 
 ## 実機での確認手順
 
-- Android Chromeでインストールし、YouTubeから共有先に「Live Link Converter」が出ることを確認します。共有すると変換結果が表示され、再共有に渡されるのが `/live/` の動画URLであることを確認します。共有をキャンセルしてもエラーが出ないことを確認します。
+- Android Chromeでインストールし、YouTubeから共有先に「Share Video Embeds」が出ることを確認します。共有すると変換結果が表示され、再共有に渡されるのが `/live/` の動画URLであることを確認します。共有をキャンセルしてもエラーが出ないことを確認します。
 - iPhoneまたはiPadでショートカットを作成し、URLのみの場合と、タイトル・改行・URLを含むテキストの場合を試します。変換結果と、同じページへの再共有が機能することを確認します。
 - 両方で、共有から開いた直後にURLを変換できることを確認します。オンラインでアプリのキャッシュができた後、機内モードで開き直してURLを変換します。
 

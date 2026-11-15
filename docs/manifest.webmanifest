@@ -1,6 +1,6 @@
 {
-  "name": "Live Link Converter",
-  "short_name": "Live Links",
+  "name": "Share Video Embeds",
+  "short_name": "Video Embeds",
   "id": "./youtube-to-x-player/",
   "start_url": "./",
   "scope": "./",
