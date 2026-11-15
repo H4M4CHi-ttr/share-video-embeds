@@ -5,7 +5,7 @@ const id='sjRYYBZHGWA';
 const origin='https://h4m4chi-ttr.github.io';
 test('iframe targets embed for the same ID, not the live page',()=>{
   const url=new URL(buildEmbedUrl('https://www.youtube.com/live/'+id,origin));
-  assert.equal(url.origin,'https://www.youtube.com');
+  assert.equal(url.origin,'https://www.youtube-nocookie.com');
   assert.equal(url.pathname,'/embed/'+id);
   assert.equal(url.searchParams.get('origin'),origin);
   assert.equal(url.searchParams.get('enablejsapi'),'1');

@@ -3,20 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta name="description" content="YouTube動画をX（旧Twitter）にプレイヤー付きで投稿するためのリンク変換ツール。URLを貼り付けて変換結果をコピーするだけで使えます。Xでの表示・再生や今後の動作を保証するものではありません。">
+  <meta name="referrer" content="strict-origin">
+  <meta name="description" content="YouTube動画をX（旧Twitter）にプレイヤー付きで投稿するためのリンク変換ツール。URLを貼り付けると、変換結果をコピーしたりXの投稿画面に渡したりできます。Xでの表示・再生や今後の動作を保証するものではありません。">
   <meta name="theme-color" content="#1758d6">
-  <title>YouTube to X Player</title>
+  <title>Live Link Converter</title>
   <link rel="icon" href="./favicon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./app.mjs"></script>
 </head>
 <body>
   <div class="site-shell">
     <header class="site-header">
-      <a class="brand" href="./" aria-label="YouTube to X Player">
-        <span class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m10 15-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m1 3 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0M8 16l8-8"/></svg></span>
-        <span>YouTube <strong>to X Player</strong><small data-i18n="subtitle"></small></span>
+      <a class="brand" href="./" aria-label="Live Link Converter">
+        <img class="brand-symbol" src="./favicon.svg" width="42" height="42" alt="">
+        <span>Live <strong>Link Converter</strong><small data-i18n="subtitle"></small></span>
       </a>
       <select id="language" aria-label="Language / 言語"><option value="ja">日本語</option><option value="en">English</option></select>
     </header>
@@ -25,7 +27,16 @@
         <h1><span data-i18n="heading1"></span><span data-i18n="heading2"></span></h1>
         <p data-i18n="intro"></p>
       </div>
-      <div class="workspace">
+      <section id="privacy-consent" class="converter privacy-consent" aria-labelledby="privacy-consent-title" hidden>
+        <h2 id="privacy-consent-title" data-i18n="consentTitle"></h2>
+        <p data-i18n="consentIntro"></p>
+        <div class="output-actions">
+          <a id="consent-privacy-link" href="./privacy.html" target="_blank" rel="noopener noreferrer" data-i18n="privacyLink"></a>
+          <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer" data-i18n="youtubeTerms"></a>
+        </div>
+        <button id="accept-privacy" type="button" class="button primary" data-i18n="consentAccept"></button>
+      </section>
+      <div class="workspace" id="converter-workspace">
         <div class="main-column">
           <section class="converter" aria-labelledby="input-label">
             <form id="converter-form" novalidate>
@@ -38,32 +49,46 @@
               <h2 id="output-label" data-i18n="output"></h2>
               <textarea id="converted-url" aria-labelledby="output-label" readonly rows="2"></textarea>
               <p id="removed-info" class="removed-info"></p>
-              <div class="output-actions"><button type="button" id="copy" class="button primary" data-i18n="copy"></button><a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="open"></a></div>
+              <div class="output-actions">
+                <a id="share-x" class="button primary" target="_blank" rel="noopener noreferrer" data-i18n="shareX"></a>
+                <button type="button" id="copy" class="button secondary" data-i18n="copy"></button>
+                <button type="button" id="share" class="button secondary" data-i18n="share" hidden></button>
+                <a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="open"></a>
+                <button type="button" id="load-player" class="button secondary" data-i18n="show" hidden disabled></button>
+              </div>
+              <label class="post-title">
+                <span data-i18n="postTitle"></span>
+                <input id="post-title" type="text" autocomplete="off" maxlength="512">
+              </label>
             </div>
             <p id="notice" class="notice" role="status"></p>
             <p class="compatibility-note" data-i18n="compatibility"></p>
             <div class="tracking-options">
               <label class="tracking-control"><input type="checkbox" id="strip-tracking"><span><strong data-i18n="strip"></strong><small data-i18n="stripHint"></small></span></label>
               <p class="tracking-detail" data-i18n="stripDetail"></p>
+              <div id="preview-options" hidden>
+                <label class="tracking-control">
+                  <input type="checkbox" id="auto-preview" aria-describedby="auto-preview-help">
+                  <strong data-i18n="autoPreview"></strong>
+                </label>
+                <p id="auto-preview-help" class="tracking-detail" data-i18n="autoPreviewHelp"></p>
+              </div>
               <p class="local-note" data-i18n="local"></p>
             </div>
           </section>
 
-          <section class="preview-panel" aria-labelledby="preview-title">
+          <section class="preview-panel" id="preview-panel" aria-labelledby="preview-title" hidden>
             <div class="section-heading"><h2 id="preview-title" data-i18n="previewTitle"></h2></div>
             <div class="preview-content">
               <p class="preview-help" data-i18n="previewHelp"></p>
               <div class="limit-inline"><span aria-hidden="true">i</span><p data-i18n="noX"></p></div>
-              <div id="empty-preview" class="empty-state"><span class="play-symbol" aria-hidden="true">▶</span><h3 data-i18n="emptyTitle"></h3><p data-i18n="emptyBody"></p></div>
               <div id="player-host" class="player-host" hidden></div>
               <div id="player-status" class="player-status" role="status" hidden><strong id="status-title"></strong><p id="status-body"></p><p id="player-error-code" class="error-code"></p></div>
               <div id="playback-proof" class="playback-proof" hidden><strong data-i18n="proof"></strong><small data-i18n="evidence"></small></div>
               <div class="player-actions">
-                <button type="button" id="load-player" class="button secondary" data-i18n="show" disabled></button>
-                <button type="button" id="play-muted" class="button secondary" data-i18n="testPlay" disabled hidden></button>
-                <button type="button" id="unload-player" class="text-button" data-i18n="unload" hidden></button>
+                <button type="button" id="unload-player" class="text-button" data-i18n="unload"></button>
               </div>
-              <p class="privacy-note" data-i18n="privacy"></p>
+              <p class="privacy-note" data-i18n="previewPrivacy"></p>
               <details id="embed-details" hidden><summary data-i18n="embedSource"></summary><code id="embed-url"></code></details>
             </div>
           </section>
@@ -73,15 +98,33 @@
             <h2 data-i18n="guideTitle"></h2>
             <ol class="quick-steps"><li data-i18n="stepPaste"></li><li data-i18n="stepCopy"></li><li data-i18n="stepPost"></li></ol>
           </section>
+          <details class="mobile-setup">
+            <summary data-i18n="mobileTitle"></summary>
+            <h3>Android Chrome</h3>
+            <button type="button" id="pwa-install" class="button secondary" data-i18n="installApp" hidden></button>
+            <p data-i18n="androidInstall"></p>
+            <p data-i18n="androidShare"></p>
+            <h3>iPhone / iPad</h3>
+            <p data-i18n="iosHome"></p>
+            <p data-i18n="iosShare"></p>
+            <a id="ios-shortcut" target="_blank" rel="noopener noreferrer" data-i18n="addShortcut" hidden></a>
+            <ol class="quick-steps">
+              <li data-i18n="iosAccept"></li>
+              <li data-i18n="iosEncode"></li>
+              <li><span data-i18n="iosAppend"></span><code>https://h4m4chi-ttr.github.io/youtube-to-x-player/#text=</code></li>
+              <li data-i18n="iosOpen"></li>
+            </ol>
+            <p data-i18n="offlineUse"></p>
+          </details>
           <details><summary data-i18n="howTitle"></summary><div class="diagram" aria-hidden="true"><span>youtube.com</span><div><code>/watch?v=</code><span>→</span><code class="live-path">/live/</code></div><small data-i18n="sameId"></small></div><p data-i18n="howBody"></p></details>
           <details><summary data-i18n="limitTitle"></summary><p data-i18n="limitBody"></p></details>
-          <details><summary data-i18n="whyTitle"></summary><p data-i18n="whyBody"></p></details>
+          <details id="preview-guide" hidden><summary data-i18n="whyTitle"></summary><p data-i18n="whyBody"></p></details>
           <details><summary data-i18n="settingsTitle"></summary><p data-i18n="settingsBody"></p></details>
         </aside>
       </div>
       <noscript>JavaScriptを有効にしてください。 / Enable JavaScript to convert links and load the player.</noscript>
     </main>
-    <footer><span data-i18n="footer"></span><nav><a href="https://github.com/H4M4CHi-ttr/youtube-to-x-player" target="_blank" rel="noopener noreferrer" data-i18n="source"></a><a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer" data-i18n="docs"></a></nav></footer>
+    <footer><span data-i18n="footer"></span><nav><a id="privacy-link" href="./privacy.html" data-i18n="privacyLink"></a><a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer" data-i18n="youtubeTerms"></a><a href="https://github.com/H4M4CHi-ttr/youtube-to-x-player" target="_blank" rel="noopener noreferrer" data-i18n="source"></a><a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer" data-i18n="docs"></a></nav></footer>
   </div>
 </body>
 </html>

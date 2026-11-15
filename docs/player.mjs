@@ -19,7 +19,7 @@ export function buildEmbedUrl(input, origin) {
   const source = new URL(converted.url);
   const start = seconds(source.searchParams.get('t')) ?? seconds(source.searchParams.get('start')) ?? seconds(new URLSearchParams(source.hash.slice(1)).get('t'));
   const end = seconds(source.searchParams.get('end'));
-  const embed = new URL('https://www.youtube.com/embed/' + converted.id);
+  const embed = new URL('https://www.youtube-nocookie.com/embed/' + converted.id);
   embed.searchParams.set('enablejsapi', '1');
   embed.searchParams.set('origin', origin);
   embed.searchParams.set('autoplay', '0');
@@ -39,7 +39,6 @@ export function updatePlayback(previous, event) {
   if (event.type === 'load') return { ...initialPlayback(), phase: 'loading' };
   if (event.type === 'ready') return previous.error || previous.played ? previous : { ...previous, phase: 'ready' };
   if (event.type === 'unconfirmed') return previous.error || previous.played ? previous : { ...previous, phase: 'unconfirmed' };
-  if (event.type === 'blocked') return { ...previous, phase: 'manual' };
   if (event.type === 'error') return { ...previous, error: event.value, phase: [101, 150].includes(event.value) ? 'restricted' : 'error' };
   if (event.type === 'state') {
     if (event.value === 1) return { phase: 'playing', played: true, error: null };
