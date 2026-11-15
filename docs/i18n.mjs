@@ -1,9 +1,10 @@
 export const strings = {
   "ja": {
     "subtitle": "X（旧Twitter）に動画を共有するためのURL変換",
-    "heading1": "YouTube動画をXに",
-    "heading2": "プレイヤー付きで投稿",
-    "intro": "YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開きます。変換されたURLをコピーして使うこともできます。",
+    "heading1": "YouTube動画を",
+    "heading2": "プレイヤー付きでXへ",
+    "flowPaste": "URLを貼る",
+    "flowPost": "Xの投稿",
     "inputLabel": "YouTubeのURLを貼り付け",
     "example": "サンプルで試す",
     "exampleUrl": "https://www.youtube.com/watch?v=b7xXmTfcGMQ",
@@ -110,9 +111,10 @@ export const strings = {
   },
   "en": {
     "subtitle": "Convert video links for sharing on X",
-    "heading1": "Post YouTube videos on X",
-    "heading2": "with an embedded player",
-    "intro": "Paste a YouTube URL and select “Share on X” to open the composer. You can also copy the converted URL.",
+    "heading1": "Share YouTube videos",
+    "heading2": "with a player on X",
+    "flowPaste": "Paste a link",
+    "flowPost": "X post",
     "inputLabel": "Paste a YouTube URL",
     "example": "Try an example",
     "exampleUrl": "https://www.youtube.com/watch?v=-OkrC6h2H5k",
