@@ -26,7 +26,7 @@ strip.checked = readTrackingPreference(storage);
 function translate() {
   const t = strings[language];
   document.documentElement.lang = language;
-  document.title = 'YouTube Live Link — ' + t.subtitle;
+  document.title = 'YouTube to X Player — ' + t.subtitle;
   byId('language').value = language;
   for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t[el.dataset.i18n];
   const frame = host.querySelector('iframe');
