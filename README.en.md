@@ -1,6 +1,6 @@
 # Share Video Embeds
 
-[Open the tool](https://h4m4chi-ttr.github.io/youtube-to-x-player/) · [日本語](README.md)
+[Open the tool](https://h4m4chi-ttr.github.io/share-video-embeds/) · [日本語](README.md)
 
 Convert YouTube URLs for player embeds on X (Twitter).
 
@@ -18,7 +18,7 @@ Edit the optional post title in the app. Leaving the title blank shares only the
 
 ## Android
 
-1. Open the [tool](https://h4m4chi-ttr.github.io/youtube-to-x-player/) in Chrome on Android.
+1. Open the [tool](https://h4m4chi-ttr.github.io/share-video-embeds/) in Chrome on Android.
 2. Open “Use from your phone’s share menu” and select “Install app”. If the button is unavailable, use “Install app” or the install option under “Add to Home screen” in Chrome’s menu. The label depends on the Chrome version.
 3. In YouTube or another app, open the share menu and select “Share Video Embeds” (short name: “Video Embeds”). Copy the result or select “Share converted URL” and pick a destination when your device supports it.
 
@@ -31,7 +31,7 @@ In Safari’s share menu, choose “Add to Home Screen” and enable “Open as 
 1. Create a shortcut in the Shortcuts app. In its details, turn on “Show in Share Sheet” and accept URLs and Text.
 2. Pass “Shortcut Input” to “Combine Text” and use new lines as the separator.
 3. Pass the combined text through “URL Encode” once.
-4. In a “Text” action, enter `https://h4m4chi-ttr.github.io/youtube-to-x-player/#text=` and append the encoded result immediately after it. Leave no space or line break between them.
+4. In a “Text” action, enter `https://h4m4chi-ttr.github.io/share-video-embeds/#text=` and append the encoded result immediately after it. Leave no space or line break between them.
 5. Pass that text to “Open URLs”. The browser runs the conversion when it opens the page. “Get Contents of URL” retrieves the HTML and does not run the page’s JavaScript.
 
 Select the shortcut from YouTube’s share sheet and use the converted URL displayed in the browser.
@@ -113,7 +113,7 @@ npm run build
 npm start
 ```
 
-Open http://127.0.0.1:5188/youtube-to-x-player/. The local server uses the same subpath as GitHub Pages and serves loopback HTTP, which supports service worker registration. The build writes the static files and a versioned service worker into `dist/`. The preview server is development-only.
+Open http://127.0.0.1:5188/share-video-embeds/. The local server uses the same subpath as GitHub Pages and serves loopback HTTP, which supports service worker registration. The build writes the static files and a versioned service worker into `dist/`. The preview server is development-only.
 
 ## Deployment
 

@@ -1,7 +1,7 @@
 // The build prepends CACHE_VERSION and SHELL_FILES.
 const scope = new URL(self.registration.scope);
 const index = new URL('index.html', scope);
-const cachePrefix = 'youtube-to-x-player-shell:' + scope.pathname + ':';
+const cachePrefix = 'share-video-embeds-shell:' + scope.pathname + ':';
 const cacheName = cachePrefix + CACHE_VERSION;
 const assets = new Set(SHELL_FILES.map(file => new URL(file, scope).href));
 

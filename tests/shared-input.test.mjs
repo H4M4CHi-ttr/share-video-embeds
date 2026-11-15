@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readSharedInput } from '../docs/shared-input.mjs';
 import { convertYouTubeUrl } from '../docs/youtube.mjs';
 
-const page = 'https://h4m4chi-ttr.github.io/youtube-to-x-player/';
+const page = 'https://h4m4chi-ttr.github.io/share-video-embeds/';
 const video = 'https://youtu.be/b7xXmTfcGMQ';
 const other = 'https://www.youtube.com/watch?v=-OkrC6h2H5k';
 const encoded = encodeURIComponent;

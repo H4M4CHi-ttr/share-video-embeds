@@ -2,7 +2,7 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { SITE_FILES } from './site-files.mjs';
 
-const base = '/youtube-to-x-player/';
+const base = '/share-video-embeds/';
 const files = new Set(SITE_FILES);
 const types = {
   html: 'text/html; charset=utf-8',

@@ -1,6 +1,6 @@
 # Share Video Embeds
 
-[ツールを開く](https://h4m4chi-ttr.github.io/youtube-to-x-player/) · [English](README.en.md)
+[ツールを開く](https://h4m4chi-ttr.github.io/share-video-embeds/) · [English](README.en.md)
 
 YouTube動画をX（旧Twitter）にプレイヤー付きで投稿するためのURL変換ツールです。
 
@@ -18,7 +18,7 @@ YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開
 
 ## Android
 
-1. AndroidのChromeで[ツール](https://h4m4chi-ttr.github.io/youtube-to-x-player/)を開きます。
+1. AndroidのChromeで[ツール](https://h4m4chi-ttr.github.io/share-video-embeds/)を開きます。
 2. 「スマホの共有メニューから使う」を開き、「アプリをインストール」を押します。ボタンがなければ、Chromeのメニューにある「アプリをインストール」か「ホーム画面に追加」のインストール項目を使います。表示名はChromeのバージョンによって異なります。
 3. YouTubeなどで「共有」を開き、共有先から「Share Video Embeds」を選びます。短い表示名は「Video Embeds」です。変換されたURLをコピーするか、対応端末では「変換URLを共有」を押して送り先を選びます。
 
@@ -31,7 +31,7 @@ Safariでは「共有」から「ホーム画面に追加」を選びます。�
 1. 「ショートカット」で新規ショートカットを作り、詳細で「共有シートに表示」をオンにします。受け取る種類は「URL」と「テキスト」にします。
 2. 「テキストを結合」に「ショートカットの入力」を渡し、区切りを改行にします。
 3. 「URLエンコード」で結合したテキスト全体を1回エンコードします。
-4. 「テキスト」アクションに `https://h4m4chi-ttr.github.io/youtube-to-x-player/#text=` と入力し、直後にエンコード結果の変数を挿入します。間に空白や改行は入れません。
+4. 「テキスト」アクションに `https://h4m4chi-ttr.github.io/share-video-embeds/#text=` と入力し、直後にエンコード結果の変数を挿入します。間に空白や改行は入れません。
 5. 「URLを開く」に手順4のテキストを渡します。ブラウザでページが開くと変換が実行されます。「URLの内容を取得」はHTMLを取得する操作で、ページ内の変換は実行されません。
 
 YouTubeの共有シートから作成したショートカットを選び、ブラウザに表示された変換URLを使ってください。
@@ -88,7 +88,7 @@ ONにすると si・pp・utm_* などを除去。開始時刻やプレイリス�
 
 ## ソースコード
 
-[GitHub](https://github.com/H4M4CHi-ttr/youtube-to-x-player) · [Development / Deployment](README.en.md#development)
+[GitHub](https://github.com/H4M4CHi-ttr/share-video-embeds) · [Development / Deployment](README.en.md#development)
 
 [X公式Player Cardサンプル](https://github.com/xdevplatform/cards-player-samples/blob/main/player/page.html) · [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
 

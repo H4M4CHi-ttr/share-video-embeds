@@ -5,10 +5,10 @@ import { runInNewContext } from 'node:vm';
 import { SHELL_FILES } from '../scripts/site-files.mjs';
 import { iosShortcutLink } from '../docs/settings.mjs';
 
-const root = new URL('https://h4m4chi-ttr.github.io/youtube-to-x-player/');
+const root = new URL('https://h4m4chi-ttr.github.io/share-video-embeds/');
 const source = new URL('../docs/', import.meta.url);
 const manifestUrl = new URL('manifest.webmanifest', root);
-const cachePrefix = 'youtube-to-x-player-shell:' + root.pathname + ':';
+const cachePrefix = 'share-video-embeds-shell:' + root.pathname + ':';
 
 test('manifest starts in the project and shares into the existing page', async () => {
   const manifest = JSON.parse(await readFile(new URL('manifest.webmanifest', source), 'utf8'));
@@ -129,7 +129,7 @@ test('the worker leaves external destinations, siblings and unknown routes alone
 test('activation cleans only older caches for the same app scope and leaves current sessions alone', async () => {
   const sw = await worker();
   const old = cachePrefix + 'old';
-  const sibling = 'youtube-to-x-player-shell:/sibling/:old';
+  const sibling = 'share-video-embeds-shell:/sibling/:old';
   sw.buckets.set(old, new Map());
   sw.buckets.set(sibling, new Map());
   sw.buckets.set('other-app-cache', new Map());

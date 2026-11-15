@@ -1,7 +1,7 @@
 {
   "name": "Share Video Embeds",
   "short_name": "Video Embeds",
-  "id": "./youtube-to-x-player/",
+  "id": "./share-video-embeds/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

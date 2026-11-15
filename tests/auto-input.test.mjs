@@ -14,8 +14,8 @@ class Element extends EventTarget {
   select() {}
   fire(type) { this.dispatchEvent(new Event(type)); }
 }
-const origin = 'http://127.0.0.1:5188/youtube-to-x-player/';
-const publicOrigin = 'https://h4m4chi-ttr.github.io/youtube-to-x-player/';
+const origin = 'http://127.0.0.1:5188/share-video-embeds/';
+const publicOrigin = 'https://h4m4chi-ttr.github.io/share-video-embeds/';
 let serial = 0;
 async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true } = {}) {
   t.mock.timers.enable({ apis: ['setTimeout'] });
