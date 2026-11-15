@@ -1,24 +1,12 @@
-import { convertYouTubeUrl } from './youtube.mjs';
-
-function seconds(value) {
-  if (!value) return null;
-  if (/^\d+$/.test(value)) {
-    const number = Number(value);
-    return Number.isSafeInteger(number) && number <= 2147483647 ? number : null;
-  }
-  const match = value.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
-  if (!match || !match.slice(1).some(Boolean)) return null;
-  const number = Number(match[1] || 0) * 3600 + Number(match[2] || 0) * 60 + Number(match[3] || 0);
-  return Number.isSafeInteger(number) && number <= 2147483647 ? number : null;
-}
+import { convertYouTubeUrl, parseYouTubeSeconds, readYouTubeStartTime } from './youtube.mjs';
 
 export function buildEmbedUrl(input, origin) {
   const converted = convertYouTubeUrl(input, false);
   const host = new URL(origin);
   if (!['https:', 'http:'].includes(host.protocol) || host.origin !== origin) throw new Error('invalid-origin');
   const source = new URL(converted.url);
-  const start = seconds(source.searchParams.get('t')) ?? seconds(source.searchParams.get('start')) ?? seconds(new URLSearchParams(source.hash.slice(1)).get('t'));
-  const end = seconds(source.searchParams.get('end'));
+  const start = readYouTubeStartTime(source);
+  const end = parseYouTubeSeconds(source.searchParams.get('end'));
   const embed = new URL('https://www.youtube-nocookie.com/embed/' + converted.id);
   embed.searchParams.set('enablejsapi', '1');
   embed.searchParams.set('origin', origin);

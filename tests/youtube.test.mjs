@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { convertYouTubeUrl } from '../docs/youtube.mjs';
+import { convertYouTubeUrl, readYouTubeStartTime, withYouTubeStartTime } from '../docs/youtube.mjs';
 const id = 'sjRYYBZHGWA';
 const live = 'https://www.youtube.com/live/' + id;
 for (const input of [
@@ -45,4 +45,30 @@ for (const input of [
 
 test('default preserves tracking until explicitly enabled', () => {
   assert.equal(convertYouTubeUrl('https://youtu.be/' + id + '?si=abc&pp=foo').url, live + '?si=abc&pp=foo');
+});
+
+test('reads YouTube start times from query parameters and fragments', () => {
+  for (const [suffix, expected] of [
+    ['?t=95', 95],
+    ['?t=1h2m3s', 3723],
+    ['?start=150', 150],
+    ['?time_continue=31', 31],
+    ['#t=1m5s&label=A%2BB', 65],
+    ['#start=12', 12],
+    ['?t=0', 0],
+    ['?t=-4&start=5', 5],
+    ['?t=2147483648', null],
+    ['', null],
+  ]) {
+    assert.equal(readYouTubeStartTime(live + suffix), expected, suffix);
+  }
+});
+
+test('replaces or removes YouTube start times without changing other link information', () => {
+  const input = live + '?si=a%2Bb&t=25&list=PLabc&start=27&time_continue=29&index=2#t=30&label=Night%20Sky&start=31';
+  const rest = live + '?si=a%2Bb&list=PLabc&index=2';
+  assert.equal(withYouTubeStartTime(input, 150), rest + '&t=150#label=Night%20Sky');
+  assert.equal(withYouTubeStartTime(input, null), rest + '#label=Night%20Sky');
+  assert.equal(withYouTubeStartTime(live + '#t=4', 0), live + '?t=0');
+  assert.throws(() => withYouTubeStartTime(live, -1));
 });

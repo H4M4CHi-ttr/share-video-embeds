@@ -33,3 +33,45 @@ export function convertYouTubeUrl(input, stripTracking = false) {
   output.hash = url.hash;
   return { id, url: output.href, removed, preserved: [...new Set(output.searchParams.keys())] };
 }
+
+const START_PARAMETERS = ['t', 'start', 'time_continue'];
+export const MAX_YOUTUBE_SECONDS = 2147483647;
+
+export function parseYouTubeSeconds(value) {
+  if (!value) return null;
+  if (/^\d+$/u.test(value)) {
+    const number = Number(value);
+    return Number.isSafeInteger(number) && number <= MAX_YOUTUBE_SECONDS ? number : null;
+  }
+  const match = value.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/u);
+  if (!match || !match.slice(1).some(Boolean)) return null;
+  const number = Number(match[1] || 0) * 3600 + Number(match[2] || 0) * 60 + Number(match[3] || 0);
+  return Number.isSafeInteger(number) && number <= MAX_YOUTUBE_SECONDS ? number : null;
+}
+
+export function readYouTubeStartTime(href) {
+  const url = new URL(href);
+  const query = url.searchParams;
+  const fragment = new URLSearchParams(url.hash.slice(1));
+  return parseYouTubeSeconds(query.get('t'))
+    ?? parseYouTubeSeconds(query.get('start'))
+    ?? parseYouTubeSeconds(fragment.get('t'))
+    ?? parseYouTubeSeconds(query.get('time_continue'))
+    ?? parseYouTubeSeconds(fragment.get('start'))
+    ?? parseYouTubeSeconds(fragment.get('time_continue'));
+}
+
+export function withYouTubeStartTime(href, seconds) {
+  if (seconds !== null && (!Number.isInteger(seconds) || seconds < 0 || seconds > MAX_YOUTUBE_SECONDS)) {
+    throw new RangeError('invalid-start-time');
+  }
+  const url = new URL(href);
+  for (const key of START_PARAMETERS) url.searchParams.delete(key);
+  // Keep the original spelling and order of unrelated fragment fields.
+  url.hash = url.hash.slice(1).split('&').filter(field => {
+    const key = new URLSearchParams(field).keys().next().value;
+    return !START_PARAMETERS.includes(key);
+  }).join('&');
+  if (seconds !== null) url.searchParams.set('t', String(seconds));
+  return url.href;
+}

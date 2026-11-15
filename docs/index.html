@@ -94,6 +94,24 @@
               <h2 id="output-label" tabindex="-1" data-i18n="output"></h2>
               <textarea id="converted-url" aria-labelledby="output-label" readonly rows="2"></textarea>
               <p id="removed-info" class="removed-info"></p>
+              <details class="start-time" id="start-time">
+                <summary>
+                  <span data-i18n="startLabel"></span>
+                  <span id="start-time-value" aria-live="polite"></span>
+                </summary>
+                <div class="start-time-controls">
+                  <div class="start-time-fields">
+                    <label><span data-i18n="startMinutes"></span><input id="start-minutes" type="text" inputmode="numeric" maxlength="10" placeholder="0" autocomplete="off" aria-describedby="start-time-error"></label>
+                    <label><span data-i18n="startSeconds"></span><input id="start-seconds" type="text" inputmode="numeric" maxlength="10" placeholder="00" autocomplete="off" aria-describedby="start-time-error"></label>
+                  </div>
+                  <div class="start-time-actions">
+                    <button type="button" id="start-back" class="button secondary" data-i18n="startBack"></button>
+                    <button type="button" id="start-forward" class="button secondary" data-i18n="startForward"></button>
+                    <button type="button" id="start-clear" class="text-button" data-i18n="startClear"></button>
+                  </div>
+                </div>
+                <p id="start-time-error" class="error-text" data-i18n="startInvalid" role="alert" hidden></p>
+              </details>
               <div class="output-actions">
                 <a id="share-x" class="button primary" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-send"></use></svg><span data-i18n="shareX"></span></a>
                 <button type="button" id="copy" class="button secondary"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg><span data-i18n="copy"></span></button>

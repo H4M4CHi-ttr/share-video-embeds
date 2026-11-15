@@ -297,6 +297,58 @@ test('the API-client test build asks for policy agreement before processing a sh
   assert.deepEqual(ui.saved, [[PRIVACY_KEY, PRIVACY_VERSION]]);
 });
 
+test('a shared start time is prefilled and adjustments reach every sharing action', async t => {
+  const video = 'https://youtu.be/b7xXmTfcGMQ?si=keep&list=PLabc&t=1m5s';
+  const ui = await mount(t, { href: publicOrigin + '?text=' + encodeURIComponent('Example\n' + video) });
+  assert.equal(ui.get('start-minutes').value, '1');
+  assert.equal(ui.get('start-seconds').value, '05');
+  ui.get('start-forward').fire('click');
+  const adjusted = 'https://www.youtube.com/live/b7xXmTfcGMQ?si=keep&list=PLabc&t=75';
+  assert.equal(ui.get('converted-url').value, adjusted);
+  assert.equal(ui.get('open-youtube').href, adjusted);
+  assert.equal(new URL(ui.get('share-x').href).searchParams.get('url'), adjusted);
+  ui.get('copy').fire('click');
+  ui.get('share').fire('click');
+  await ui.tick(0);
+  assert.deepEqual(ui.clipboardWrites, [adjusted]);
+  assert.deepEqual(ui.shareCalls, [{ url: adjusted }]);
+  assert.deepEqual(ui.saved, []);
+
+  ui.get('strip-tracking').checked = true;
+  ui.get('strip-tracking').fire('change');
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/b7xXmTfcGMQ?list=PLabc&t=75');
+  ui.hash('#text=' + encodeURIComponent(video));
+  assert.equal(ui.get('start-seconds').value, '05');
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/b7xXmTfcGMQ?list=PLabc&t=1m5s');
+});
+
+test('manual start time edits validate, step to zero, and clear independently of the video', async t => {
+  const ui = await mount(t, { href: publicOrigin });
+  ui.input('https://youtu.be/b7xXmTfcGMQ?list=PLabc&start=4#label=original');
+  assert.equal(ui.get('start-seconds').value, '04');
+  const current = () => new URL(ui.get('converted-url').value);
+  ui.get('start-back').fire('click');
+  assert.equal(current().searchParams.get('t'), '0');
+  ui.get('start-minutes').value = '2';
+  ui.get('start-seconds').value = '30';
+  ui.get('start-seconds').fire('input');
+  assert.equal(current().searchParams.get('t'), '150');
+  ui.get('start-seconds').value = '-2';
+  ui.get('start-seconds').fire('input');
+  assert.equal(ui.get('start-time-error').hidden, false);
+  assert.equal(current().searchParams.get('t'), '150');
+  ui.get('start-clear').fire('click');
+  assert.equal(current().search, '?list=PLabc');
+  assert.equal(current().hash, '#label=original');
+  assert.equal(ui.get('start-minutes').value, '');
+  assert.equal(ui.get('start-seconds').value, '');
+  assert.equal(ui.get('start-time-error').hidden, true);
+  ui.input('https://youtu.be/-OkrC6h2H5k#t=1m25s');
+  assert.equal(ui.get('start-minutes').value, '1');
+  assert.equal(ui.get('start-seconds').value, '25');
+  assert.equal(current().href, 'https://www.youtube.com/live/-OkrC6h2H5k?t=85');
+});
+
 test('text shares put the converted link at the start of the viewport', async t => {
   const text = encodeURIComponent('Shared title\nhttps://youtu.be/b7xXmTfcGMQ?t=20');
   const ui = await mount(t, { href: publicOrigin + '?text=' + text });

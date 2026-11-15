@@ -1,4 +1,4 @@
-import { convertYouTubeUrl } from './youtube.mjs';
+import { convertYouTubeUrl, MAX_YOUTUBE_SECONDS, parseYouTubeSeconds, readYouTubeStartTime, withYouTubeStartTime } from './youtube.mjs';
 import { buildEmbedUrl, initialPlayback, updatePlayback } from './player.mjs';
 import {
   iosShortcutLink, readTrackingPreference, saveTrackingPreference, readTitlePreference, saveTitlePreference,
@@ -12,6 +12,9 @@ const byId = id => document.getElementById(id);
 const input = byId('video-url');
 const strip = byId('strip-tracking');
 const output = byId('converted-url');
+const startMinutes = byId('start-minutes');
+const startSeconds = byId('start-seconds');
+const startTimeError = byId('start-time-error');
 const host = byId('player-host');
 const previewPanel = byId('preview-panel');
 const autoPreview = byId('auto-preview');
@@ -25,6 +28,8 @@ try { storage = window.localStorage; } catch { storage = null; }
 let language = navigator.language.startsWith('ja') ? 'ja' : 'en';
 try { const saved = storage?.getItem('youtube-live-link-pages.language'); if (['ja','en'].includes(saved)) language = saved; } catch { /* Preference is optional. */ }
 let converted = null;
+// The original link supplies the start time until the user sets or clears it.
+let startOverride;
 let playback = initialPlayback();
 let player = null;
 let sequence = 0;
@@ -80,6 +85,12 @@ function renderConversion() {
   if (!converted) return;
   output.value = converted.url;
   byId('open-youtube').href = converted.url;
+  const start = readYouTubeStartTime(converted.url);
+  byId('start-time-value').textContent = start === null
+    ? t.startUnset
+    : Math.floor(start / 60) + ':' + String(start % 60).padStart(2, '0');
+  byId('start-back').disabled = start === null || start === 0;
+  byId('start-forward').disabled = start === MAX_YOUTUBE_SECONDS;
   byId('removed-info').textContent = !strip.checked ? t.trackingKept : converted.removed.length ? t.removed + ': ' + converted.removed.join(', ') : t.noneRemoved;
 }
 function renderXShare() {
@@ -149,12 +160,48 @@ function unload() {
   playback = initialPlayback();
   renderPlayback();
 }
+function syncStartFields() {
+  const start = converted ? readYouTubeStartTime(converted.url) : null;
+  startMinutes.value = start === null ? '' : String(Math.floor(start / 60));
+  startSeconds.value = start === null ? '' : String(start % 60).padStart(2, '0');
+  startTimeError.hidden = true;
+}
+
+function setStartTime(seconds) {
+  if (!converted) return;
+  startOverride = seconds;
+  startTimeError.hidden = true;
+  const url = withYouTubeStartTime(converted.url, seconds);
+  if (url === converted.url) return;
+  converted = { ...converted, url };
+  noticeKey = '';
+  refreshConversion();
+}
+
+function editStartTime() {
+  const minutes = startMinutes.value.trim().normalize('NFKC');
+  const seconds = startSeconds.value.trim().normalize('NFKC');
+  const total = Number(minutes) * 60 + Number(seconds);
+  const valid = /^\d*$/u.test(minutes) && /^\d*$/u.test(seconds)
+    && Number.isSafeInteger(total) && total <= MAX_YOUTUBE_SECONDS;
+  startTimeError.hidden = valid;
+  if (valid) setStartTime(minutes || seconds ? total : null);
+}
+
+function stepStartTime(delta) {
+  if (!converted) return;
+  const start = readYouTubeStartTime(converted.url) ?? 0;
+  setStartTime(Math.min(MAX_YOUTUBE_SECONDS, Math.max(0, start + delta)));
+  syncStartFields();
+}
+
 function resetInput(error = '') {
   converted = null;
-  unload();
+  startOverride = undefined;
   inputError = error;
   noticeKey = '';
-  renderConversion(); renderError(); renderNotice();
+  syncStartFields();
+  refreshConversion();
 }
 function convert(showErrors = true) {
   if (!policyAccepted) return;
@@ -164,6 +211,23 @@ function convert(showErrors = true) {
     try { converted = convertYouTubeUrl(input.value, strip.checked); }
     catch (error) { if (showErrors) inputError = error.message === 'ambiguous-url' ? 'ambiguous' : 'invalid'; }
   }
+  if (converted && startOverride !== undefined) {
+    converted.url = withYouTubeStartTime(converted.url, startOverride);
+  } else if (converted) {
+    const source = new URL(converted.url);
+    const queryStart = parseYouTubeSeconds(source.searchParams.get('t'))
+      ?? parseYouTubeSeconds(source.searchParams.get('start'));
+    if (queryStart === null) {
+      // Move fragment and legacy times into the query that X's crawler receives.
+      const start = readYouTubeStartTime(source);
+      if (start !== null) converted.url = withYouTubeStartTime(source, start);
+    }
+  }
+  syncStartFields();
+  refreshConversion();
+}
+
+function refreshConversion() {
   unload();
   renderConversion(); renderError(); renderNotice();
   // Avoid repeated YouTube connections while a URL is still being edited.
@@ -184,6 +248,7 @@ function importSharedInput() {
   window.history.replaceState(window.history.state, '', shared.cleanUrl);
   postTitle.value = shared.title ?? '';
   input.value = shared.input ?? '';
+  startOverride = undefined;
   if (shared.error) {
     resetInput(shared.error);
     return;
@@ -282,6 +347,7 @@ async function loadPlayer() {
 
 byId('converter-form').addEventListener('submit', event => { event.preventDefault(); convert(); });
 input.addEventListener('input', () => {
+  startOverride = undefined;
   postTitle.value = '';
   convert(false);
 });
@@ -293,6 +359,7 @@ byId('clear').addEventListener('click', () => {
   input.focus();
 });
 byId('example').addEventListener('click', () => {
+  startOverride = undefined;
   postTitle.value = '';
   input.value = strings[language].exampleUrl;
   convert();
@@ -342,6 +409,18 @@ shareButton.addEventListener('click', async () => {
     noticeKey = 'shareFailed';
     renderNotice();
   }
+});
+for (const field of [startMinutes, startSeconds]) {
+  field.addEventListener('input', editStartTime);
+  field.addEventListener('change', () => {
+    if (startTimeError.hidden) syncStartFields();
+  });
+}
+byId('start-back').addEventListener('click', () => stepStartTime(-10));
+byId('start-forward').addEventListener('click', () => stepStartTime(10));
+byId('start-clear').addEventListener('click', () => {
+  setStartTime(null);
+  syncStartFields();
 });
 output.addEventListener('focus', () => output.select());
 byId('load-player').addEventListener('click', loadPlayer);
