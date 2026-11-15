@@ -152,8 +152,16 @@ function importSharedInput() {
   window.history.replaceState(window.history.state, '', shared.cleanUrl);
   postTitle.value = shared.title ?? '';
   input.value = shared.input ?? '';
-  if (shared.error) resetInput(shared.error);
-  else convert();
+  if (shared.error) {
+    resetInput(shared.error);
+    return;
+  }
+  convert();
+  if (converted && shared.hasText) {
+    const heading = byId('output-label');
+    heading.focus({ preventScroll: true });
+    heading.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }
 }
 
 function loadApi(signal) {

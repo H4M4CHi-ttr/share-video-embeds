@@ -54,7 +54,12 @@ export function readSharedInput(href) {
 
   if (candidates.size) {
     const title = suppliedTitle || textTitle;
-    return { cleanUrl, input: candidates.values().next().value, ...(title ? { title } : {}) };
+    return {
+      cleanUrl,
+      input: candidates.values().next().value,
+      hasText: entries.some(([field, value]) => field === 'text' && value.trim() !== ''),
+      ...(title ? { title } : {}),
+    };
   }
   return { cleanUrl, error: entries.some(([, value]) => value.trim()) ? 'shareInvalid' : 'shareEmpty' };
 }

@@ -10,7 +10,11 @@ class Element extends EventTarget {
   remove() { if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this); }
   replaceChildren(...children) { this.children = children; }
   querySelector(tag) { return this.children.find(child => child.tag === tag) ?? null; }
-  focus() {}
+  focus(options) { this.focusOptions = options; }
+  scrollIntoView(options) {
+    this.scrollCalls ??= [];
+    this.scrollCalls.push(options);
+  }
   select() {}
   fire(type) { this.dispatchEvent(new Event(type)); }
 }
@@ -290,6 +294,31 @@ test('the API-client test build asks for policy agreement before processing a sh
   assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/b7xXmTfcGMQ');
   assert.equal(globalThis.location.href, origin);
   assert.deepEqual(ui.saved, [[PRIVACY_KEY, PRIVACY_VERSION]]);
+});
+
+test('text shares put the converted link at the start of the viewport', async t => {
+  const text = encodeURIComponent('Shared title\nhttps://youtu.be/b7xXmTfcGMQ?t=20');
+  const ui = await mount(t, { href: publicOrigin + '?text=' + text });
+  const heading = ui.get('output-label');
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/b7xXmTfcGMQ?t=20');
+  assert.deepEqual(heading.focusOptions, { preventScroll: true });
+  assert.deepEqual(heading.scrollCalls, [{ block: 'start', behavior: 'instant' }]);
+
+  ui.hash('#text=' + encodeURIComponent('Next video\nhttps://youtu.be/-OkrC6h2H5k'));
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/-OkrC6h2H5k');
+  assert.equal(heading.scrollCalls.length, 2);
+});
+
+test('URL-only shares, manual input, and invalid shared text do not move the viewport', async t => {
+  const url = encodeURIComponent('https://youtu.be/b7xXmTfcGMQ');
+  const ui = await mount(t, { href: publicOrigin + '#url=' + url });
+  assert.equal(ui.get('output-panel').hidden, false);
+  assert.equal(ui.get('output-label').scrollCalls, undefined);
+  ui.input('https://youtu.be/-OkrC6h2H5k');
+  assert.equal(ui.get('output-label').scrollCalls, undefined);
+  ui.hash('#text=No%20video%20here');
+  assert.equal(ui.get('output-panel').hidden, true);
+  assert.equal(ui.get('output-label').scrollCalls, undefined);
 });
 
 test('X sharing carries the shared or edited title and converted link without metadata requests', async t => {

@@ -14,6 +14,17 @@
   <script type="module" src="./app.mjs"></script>
 </head>
 <body>
+  <svg class="icon-symbols" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="icon-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7-11 11"/></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 4H6a2 2 0 0 0-2 2v10"/></symbol>
+    <symbol id="icon-share" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6-9 9m8-1v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22c4-2 7-5 7-10V5l-7-3-7 3v7c0 5 3 8 7 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 0v5h5M9 12h6m-6 4h6"/></symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6m-2-14-4 16"/></symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24"><path d="M12 6a4 4 0 0 0-4-2H3v15h5a4 4 0 0 1 4 2m0-15a4 4 0 0 1 4-2h5v15h-5a4 4 0 0 0-4 2m0-15v15"/></symbol>
+  </svg>
   <div class="site-shell">
     <header class="site-header">
       <a class="brand" href="./" aria-label="Share Video Embeds">
@@ -25,17 +36,17 @@
     <main>
       <div class="intro">
         <h1><span data-i18n="heading1"></span><span data-i18n="heading2"></span></h1>
-        <div class="share-flow" aria-hidden="true">
-          <div class="flow-source">
-            <span class="flow-label" data-i18n="flowPaste"></span>
-            <code>youtu.be/…</code>
+        <figure class="post-preview" aria-hidden="true">
+          <figcaption data-i18n="postExample"></figcaption>
+          <div class="post-preview-player">
+            <div class="post-preview-scene"></div>
+            <div class="post-preview-controls">
+              <span class="post-preview-pause"></span>
+              <span class="post-preview-track"></span>
+              <span>YouTube</span>
+            </div>
           </div>
-          <span class="flow-arrow"></span>
-          <div class="flow-post">
-            <span class="flow-player"></span>
-            <span class="flow-label" data-i18n="flowPost"></span>
-          </div>
-        </div>
+        </figure>
       </div>
       <section id="privacy-consent" class="converter privacy-consent" aria-labelledby="privacy-consent-title" hidden>
         <h2 id="privacy-consent-title" data-i18n="consentTitle"></h2>
@@ -56,14 +67,14 @@
               <p id="input-error" class="error-text" role="alert" hidden></p>
             </form>
             <div id="output-panel" class="conversion-output" hidden>
-              <h2 id="output-label" data-i18n="output"></h2>
+              <h2 id="output-label" tabindex="-1" data-i18n="output"></h2>
               <textarea id="converted-url" aria-labelledby="output-label" readonly rows="2"></textarea>
               <p id="removed-info" class="removed-info"></p>
               <div class="output-actions">
-                <a id="share-x" class="button primary" target="_blank" rel="noopener noreferrer" data-i18n="shareX"></a>
-                <button type="button" id="copy" class="button secondary" data-i18n="copy"></button>
-                <button type="button" id="share" class="button secondary" data-i18n="share" hidden></button>
-                <a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer" data-i18n="open"></a>
+                <a id="share-x" class="button primary" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-send"></use></svg><span data-i18n="shareX"></span></a>
+                <button type="button" id="copy" class="button secondary"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-copy"></use></svg><span data-i18n="copy"></span></button>
+                <button type="button" id="share" class="button secondary" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-share"></use></svg><span data-i18n="share"></span></button>
+                <a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg><span data-i18n="open"></span></a>
                 <button type="button" id="load-player" class="button secondary" data-i18n="show" hidden disabled></button>
               </div>
               <label class="post-title">
@@ -111,13 +122,13 @@
           <details class="mobile-setup">
             <summary data-i18n="mobileTitle"></summary>
             <h3>Android Chrome</h3>
-            <button type="button" id="pwa-install" class="button secondary" data-i18n="installApp" hidden></button>
+            <button type="button" id="pwa-install" class="button secondary" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="installApp"></span></button>
             <p data-i18n="androidInstall"></p>
             <p data-i18n="androidShare"></p>
             <h3>iPhone / iPad</h3>
             <p data-i18n="iosHome"></p>
             <p data-i18n="iosShare"></p>
-            <a id="ios-shortcut" target="_blank" rel="noopener noreferrer" data-i18n="addShortcut" hidden></a>
+            <a id="ios-shortcut" target="_blank" rel="noopener noreferrer" hidden><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-download"></use></svg><span data-i18n="addShortcut"></span></a>
             <ol class="quick-steps">
               <li data-i18n="iosAccept"></li>
               <li data-i18n="iosEncode"></li>
@@ -134,7 +145,15 @@
       </div>
       <noscript>JavaScriptを有効にしてください。 / Enable JavaScript to convert links and load the player.</noscript>
     </main>
-    <footer><span data-i18n="footer"></span><nav><a id="privacy-link" href="./privacy.html" data-i18n="privacyLink"></a><a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer" data-i18n="youtubeTerms"></a><a href="https://github.com/H4M4CHi-ttr/share-video-embeds" target="_blank" rel="noopener noreferrer" data-i18n="source"></a><a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer" data-i18n="docs"></a></nav></footer>
+    <footer>
+      <span data-i18n="footer"></span>
+      <nav>
+        <a id="privacy-link" href="./privacy.html"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-shield"></use></svg><span data-i18n="privacyLink"></span></a>
+        <a href="https://www.youtube.com/t/terms" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-file"></use></svg><span data-i18n="youtubeTerms"></span></a>
+        <a href="https://github.com/H4M4CHi-ttr/share-video-embeds" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-code"></use></svg><span data-i18n="source"></span></a>
+        <a href="https://developers.google.com/youtube/iframe_api_reference" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-book"></use></svg><span data-i18n="docs"></span></a>
+      </nav>
+    </footer>
   </div>
 </body>
 </html>

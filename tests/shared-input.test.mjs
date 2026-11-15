@@ -30,7 +30,7 @@ test('fragment wins over query and both kinds of consumed fields are removed', (
   const result = readSharedInput(page + '?' + new URLSearchParams({
     title: 'Android title', text: other, url: other, theme: 'light',
   }) + '#text=' + encoded(video) + '&section=%2f&section=');
-  assert.deepEqual(result, { input: video, cleanUrl: page + '?theme=light#section=%2f&section=' });
+  assert.deepEqual(result, { input: video, hasText: true, cleanUrl: page + '?theme=light#section=%2f&section=' });
   assert.equal(readSharedInput(page + '?url=' + encoded(video) + '#text=').error, 'shareEmpty');
 });
 
