@@ -1,90 +1,130 @@
 # Share Video Embeds
 
-[ツールを開く](https://h4m4chi-ttr.github.io/share-video-embeds/) · [English](README.en.md)
+[Open the tool](https://h4m4chi-ttr.github.io/share-video-embeds/) · [日本語](README.ja.md)
 
-YouTube動画をX（旧Twitter）にプレイヤー付きで投稿するためのURL変換ツールです。
+Convert YouTube URLs for player embeds on X (Twitter).
 
-YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開きます。変換されたURLをコピーして使うこともできます。
+Paste a YouTube URL and select “Share on X” to open the composer. You can also copy the converted URL.
 
-**Xでの表示・再生や今後の動作を100%保証するものではありません。**
+**This tool cannot guarantee 100% success for display or playback on X, now or in the future.**
 
-## 使い方
+## How to use
 
-1. YouTubeのURLを貼り付けるか、端末の共有メニューから動画を渡します。
-2. 「Xでシェア」を押します。変換URLが投稿画面に入ります。タイトルを付ける設定がONの場合は、共有元から受け取ったタイトルや入力欄のタイトルも入ります。
-3. Xで内容を確認して投稿します。変換URLだけ使いたいときは「X投稿用URLをコピー」でコピーできます。
+1. Paste a YouTube URL or send a video from your device’s share menu.
+2. Select “Share on X”. The composer receives the converted URL. When title sharing is on, it also receives the shared or entered title.
+3. Review the draft and post it on X. Use “Copy URL for X” to copy just the converted URL.
 
-「投稿に添えるタイトル（任意）」でタイトルを変更できます。「Xでシェアするときにタイトルを付ける」は初期設定でONです。OFFにすると入力欄が隠れ、変換URLだけを渡します。選択はブラウザに保存されます。
+Edit the optional post title in the app. Including the title is on by default. Turn it off to hide the title field and share just the URL. The app remembers your choice.
 
-## PC（ブックマークレット）
+## Computer (bookmarklet)
 
-「PCから共有する（ブックマークレット）」を開き、「Share Video Embeds」ボタンをブックマークバーにドラッグ＆ドロップします。YouTubeの動画ページで登録したブックマークを押すと、動画のURLとタイトルを取り込んだツールが新しいタブで開きます。
+Open “Share from a computer (bookmarklet)” and drag the “Share Video Embeds” button to your bookmarks bar. Select the saved bookmark on a YouTube video page to open the tool in a new tab with the video URL and title.
 
 ## Android
 
-1. AndroidのChromeで[ツール](https://h4m4chi-ttr.github.io/share-video-embeds/)を開きます。
-2. 「スマホの共有メニューから使う」を開き、「アプリをインストール」を押します。ボタンがなければ、Chromeのメニューにある「アプリをインストール」か「ホーム画面に追加」のインストール項目を使います。表示名はChromeのバージョンによって異なります。
-3. YouTubeなどで「共有」を開き、共有先から「Share Video Embeds」を選びます。短い表示名は「Video Embeds」です。変換されたURLをコピーするか、対応端末では「変換URLを共有」を押して送り先を選びます。
+1. Open the [tool](https://h4m4chi-ttr.github.io/share-video-embeds/) in Chrome on Android.
+2. Open “Use from your phone’s share menu” and select “Install app”. If the button is unavailable, use “Install app” or the install option under “Add to Home screen” in Chrome’s menu. The label depends on the Chrome version.
+3. In YouTube or another app, open the share menu and select “Share Video Embeds” (short name: “Video Embeds”). Copy the result or select “Share converted URL” and pick a destination when your device supports it.
 
-共有先に表示されないときは、ChromeでWebアプリをインストールできているか（ホーム画面のブックマークだけになっていないか）確認してください。[Chromeの共有受信の資料](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
+If the app is missing from the share menu, check that Chrome installed the web app as an app. A Home Screen bookmark alone is insufficient. [Chrome’s Web Share Target guide](https://developer.chrome.com/docs/capabilities/web-apis/web-share-target)
 
-## iPhone・iPad
+## iPhone and iPad
 
-1. [日本語の共有ショートカット](https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5)をiPhoneまたはiPadで開き、「ショートカットを取得」をタップします。[英語版もあります](https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a)。
-2. YouTubeの共有メニューで「YouTubeをXに埋め込み」を選ぶと、ツールの変換結果が開きます。
+1. Open the [English sharing shortcut](https://www.icloud.com/shortcuts/84e6c58d40d8494a9e4ce1584605b89a) on your iPhone or iPad and tap “Get Shortcut”. The [Japanese version](https://www.icloud.com/shortcuts/5ee0dc22e8ae4aa6a911aed3deed51c5) is also available.
+2. Choose “Embed YouTube on X” from YouTube’s share sheet to open the converted link in the tool.
 
-iPhone・iPadでツールを直接開くと、画面下の案内から表示言語に合ったショートカットを追加できます。[Appleの共有ショートカットガイド](https://support.apple.com/ja-jp/guide/shortcuts/apdf01f8c054/ios)
+When you open the tool directly on an iPhone or iPad, the install banner links to the shortcut for the selected language. [Apple’s guide to shared shortcuts](https://support.apple.com/guide/shortcuts/share-shortcuts-apdf01f8c054/ios)
 
-## 共有入力の仕様
+## Shared input interface
 
-- ショートカットは `#text=` にURLエンコードした共有テキストを渡します。動画URLを直接渡す場合は `#url=` も使えます。
-- Androidの共有は、同じページへのGETリクエストで `text`、`url`、`title` を渡します。どの項目に動画URLが入っていても取り込みます。
-- フラグメントに `text` または `url` があれば、空欄でもクエリより優先します。共有用の項目は処理後にアドレス欄から除き、他の項目は残します。
-- URLだけでも、タイトルとURLを改行や空白で区切ったテキストでも使えます。既存の変換処理で検証し、同じ変換先にまとまるリンクは1件として扱います。開始時刻などが異なるリンクが複数ある場合は、変換したいURLを1つ貼り直してください。
-- 共有パラメータは1回だけデコードします。URL中の `&`、`#`、`+`、`%` を保つには、送る文字列全体をエンコードしてください。
+- Shortcuts sends URL-encoded shared text after `#text=`. Use `#url=` to pass an encoded video URL directly.
+- Android uses GET parameters `text`, `url`, and `title` on the same page. The app checks all three for video links.
+- The presence of `text` or `url` in the fragment takes precedence over the query, even when its value is empty. The app then removes the share fields from the address bar and preserves other fields.
+- Share a URL on its own or provide a title and URL separated by spaces or new lines. The app validates candidates with the existing converter and treats identical converted URLs as one candidate. If the results differ, for example by start time, paste just the link you want to convert.
+- Outer share parameters are decoded once. Encode the entire shared value to preserve characters such as `&`, `#`, `+` and `%`.
 
-## オフラインと更新
+## Offline use and updates
 
-初回にオンラインで開き、ブラウザがアプリのファイルを保存した後はオフラインでも変換できます。Xの投稿画面や動画を開くには通信が必要です。再共有は端末の共有機能と送り先アプリの動作に従います。
+Once the browser has loaded the app online and finished caching its files, you can convert URLs offline. Opening a video or the X composer requires a connection. Resharing depends on the device and the receiving app.
 
-ビルド時にアプリのファイルから版を識別し、Service Workerが版ごとにキャッシュを作ります。更新はアプリのタブやウィンドウをすべて閉じてから有効になります。入力中に更新が見つかっても強制的にリロードしません。更新が反映されない場合は、一度オンラインで開いた後にアプリの画面をすべて閉じ、開き直してください。[Service Workerのライフサイクル](https://web.dev/articles/service-worker-lifecycle)
+The build identifies each version from the app files and the service worker caches those files by version. A waiting update takes effect after all tabs and windows for the app close. Updates do not force a reload while you are entering a URL. To pick up an update, open the app online, close all instances of it, and open it again. [Service worker lifecycle](https://web.dev/articles/service-worker-lifecycle)
 
-## 実機での確認手順
+## Device checks
 
-- Android Chromeでインストールし、YouTubeから共有先に「Share Video Embeds」が出ることを確認します。共有すると変換結果が表示され、再共有に渡されるのが `/live/` の動画URLであることを確認します。共有をキャンセルしてもエラーが出ないことを確認します。
-- iPhoneまたはiPadでショートカットを作成し、URLのみの場合と、タイトル・改行・URLを含むテキストの場合を試します。変換結果と、同じページへの再共有が機能することを確認します。
-- 両方で、共有から開いた直後にURLを変換できることを確認します。オンラインでアプリのキャッシュができた後、機内モードで開き直してURLを変換します。
+- On Android Chrome, install the app and check that “Share Video Embeds” appears when sharing from YouTube. Verify the converted link appears, the outgoing share contains the `/live/` video URL, and canceling a share shows no error.
+- On iPhone or iPad, create the shortcut and try both a URL and shared text containing a title, a new line, and a URL. Check the conversion and repeat the share to the same page.
+- On both, check conversion after opening from a share. After the browser caches the app, reopen it in airplane mode and test conversion.
 
-## 変換の仕組み
+## How the conversion works
 
-同じ動画でも、URLを /live/ 形式に変えると、X（旧Twitter）向けのメタ情報が埋め込みプレイヤー用になる場合があります。この違いを利用して動画IDを変えずにURLの形式を変更します。メタ情報はリンクの表示方法をXに伝える情報です。
+For the same video, switching the URL to the /live/ format can change the metadata served to X (formerly Twitter) to request an embedded player. This tool uses that difference to change the URL format while keeping the video ID. Metadata tells X how to display a link.
 
-## 動作の保証
+A direct HTTP check on 2026-11-15, using User-Agent `Twitterbot/1.0`, observed the following for the same video:
 
-YouTubeやXの仕様変更、動画ごとの制限、Xが保持しているリンク情報などによって、プレイヤーが表示されないことや再生できないことがあります。この方法が今後も使えるとは限りません。
+| URL | twitter:card |
+| --- | --- |
+| https://www.youtube.com/watch?v=sjRYYBZHGWA | summary_large_image |
+| https://www.youtube.com/live/sjRYYBZHGWA | player |
 
-## 公開用ビルドとプレビューの検証
+This is an observed example, not a promise for every video. X's [official Player Card sample](https://github.com/xdevplatform/cards-player-samples/blob/main/player/page.html) illustrates the player metadata. This static tool changes URLs; it does not fetch YouTube HTML or inspect the metadata for each submitted URL.
 
-標準の `npm run build` はリンク変換・コピー・共有を提供します。YouTubeのプレイヤーによるプレビューは別のローカル確認版にあります。公開用の判断と公式条項の対応は[ポリシー確認メモ](YOUTUBE-POLICY.md)を参照してください。
+## Compatibility and local preview testing
 
-ローカル確認版を作るには `npm run build:preview` の後に `npm start` を実行します。初期状態では変換だけを行います。プレイヤーは「プレビューを表示」を押すか、「次回から自動でプレビューを読み込む」をONにして次のURLを変換したときに読み込みます。動画はプレイヤー内の操作で再生します。Made For Kidsの照会はこの確認版に含まれていません。
+Changes to YouTube or X, video restrictions, and link information cached by X may prevent the player from appearing or playing. This method may stop working in the future.
 
-## 追跡用パラメータを除去
+The standard build handles conversion, copy and sharing. The separate loopback-only test build has the player controls. [Policy review](YOUTUBE-POLICY.md)
 
-初期設定はOFF。ON／OFFをこのブラウザに保存します。
+Run `npm run build:preview` followed by `npm start` to inspect the local test interface. By default it only converts. Select “Show preview” to load the player or enable “Load previews automatically next time” to load it after the next conversion. This preference applies to manual input and both sharing paths. Playback starts from the player's controls. The test build does not perform the required Made For Kids lookup for production embeds.
 
-ONにすると si・pp・utm_* などを除去。開始時刻やプレイリスト情報は残します。
+## Features
 
-## 保存するのは設定だけ
+- Supports watch, youtu.be, shorts, live and embed links.
+- Converts valid input immediately, including Android and iOS share input.
+- Tracking removal is OFF by default. The ON/OFF choice is saved in localStorage and restored on the next visit.
+- Preserves timestamps, playlist information and unknown queries in the copied URL. Known tracking queries are removed only when requested.
+- Japanese/English UI, responsive layout, copy and share.
+- Japanese sample: b7xXmTfcGMQ. English sample: -OkrC6h2H5k. Changing language does not overwrite an entered URL.
+- Static files only. No server, proxy, API key, build dependency or tool account is needed.
 
-公開版は表示言語、追跡除去、Xでシェアするときにタイトルを付けるかどうかをブラウザに保存します。ローカル確認版では同意の記録と、明示的にONにした自動プレビュー設定も保存します。アプリは共有テキスト、入力URL、変換履歴を保存しません。オフライン用にはアプリのファイルだけをキャッシュします。[プライバシーポリシー・利用条件](docs/privacy.html#ja)
+## Privacy and preferences
 
-ショートカットのフラグメントはHTTPリクエストに含まれません。Service Workerがまだページを制御していない初回などは、Androidが渡したクエリがGitHub PagesへのHTTPリクエストに含まれます。処理後は共有パラメータをアドレス欄から除きます。
+Conversion runs locally. The public build saves your language, tracking removal, and choice to include titles when sharing on X. The local test build also stores the policy agreement and a chosen automatic preview setting. [Privacy policy and terms](docs/privacy.html#en)
 
-## ソースコード
+Existing preference keys:
+- `youtube-live-link-pages.language`
+- `youtube-live-link-pages.strip-tracking`
 
-[GitHub](https://github.com/H4M4CHi-ttr/share-video-embeds) · [Development / Deployment](README.en.md#development)
+The app does not store share text, input URLs, or playback history. The offline cache contains only app files. Shortcut fragments are excluded from HTTP requests. Before a service worker controls the page, a request to GitHub Pages can include the Android share query. The app removes the share fields from the address bar after handling them.
 
-[X公式Player Cardサンプル](https://github.com/xdevplatform/cards-player-samples/blob/main/player/page.html) · [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
+With tracking removal OFF, the copied link retains its queries. The removable names are listed in `docs/youtube.mjs`; this heuristic cannot identify every possible tracking mechanism.
 
-YouTube・Xの非公式ツール
+## Development
+
+Requires Node.js 22 or newer. No npm installation is needed.
+
+```sh
+npm test
+npm run build
+npm start
+```
+
+Open http://127.0.0.1:5188/share-video-embeds/. The local server uses the same subpath as GitHub Pages and serves loopback HTTP, which supports service worker registration. The build writes the static files and a versioned service worker into `dist/`. The preview server is development-only.
+
+## Deployment
+
+GitHub Settings → Pages → Source: GitHub Actions.
+
+The pinned workflow runs tests, builds the static files, and deploys `dist/` after a push to `main`. Pull requests only run build checks. Asset paths are relative, and the manifest starts and accepts shares at `./`. The manifest ID resolves from the origin. Forks deploying under a different project path should update `id` in `docs/manifest.webmanifest`, the development subpath, and the published URLs in the README files and `docs/index.html`.
+
+## References
+
+- [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
+- [Player parameters and embed URLs](https://developers.google.com/youtube/player_parameters)
+- [X official Player Card sample](https://github.com/xdevplatform/cards-player-samples/blob/main/player/page.html)
+- [GitHub Pages deployment](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
+
+The earlier ChatGPT Sites version remains a separate project. No Sites identity or credentials are included here.
+
+## License
+
+[MIT](LICENSE)

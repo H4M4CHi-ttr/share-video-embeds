@@ -5,9 +5,10 @@ import { SHELL_FILES, SITE_FILES } from './site-files.mjs';
 
 const source = new URL('../docs/', import.meta.url);
 const target = new URL('../dist/', import.meta.url);
-const content = new Map(await Promise.all(SITE_FILES.map(async file =>
-  [file, await readFile(new URL(file, source))]
-)));
+const content = new Map(await Promise.all(SITE_FILES.map(async file => {
+  const fileUrl = file === 'LICENSE' ? new URL('../LICENSE', import.meta.url) : new URL(file, source);
+  return [file, await readFile(fileUrl)];
+})));
 const previewTest = process.argv.includes('--preview-test');
 const html = content.get('index.html').toString('utf8');
 if (previewTest) {
