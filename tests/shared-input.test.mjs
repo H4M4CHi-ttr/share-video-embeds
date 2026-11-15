@@ -34,6 +34,13 @@ test('fragment wins over query and both kinds of consumed fields are removed', (
   assert.equal(readSharedInput(page + '?url=' + encoded(video) + '#text=').error, 'shareEmpty');
 });
 
+test('a bookmarklet title stays separate from video links and is removed from the fragment', () => {
+  const title = '曲名 / https://www.youtube.com/watch?v=-OkrC6h2H5k';
+  const fields = new URLSearchParams({ text: video, title, section: 'guide' });
+  const result = readSharedInput(page + '#' + fields);
+  assert.deepEqual(result, { input: video, hasText: true, title, cleanUrl: page + '#section=guide' });
+});
+
 test('ordinary fragments and queries do not trigger a share', () => {
   assert.equal(readSharedInput(page + '?label=abc#intro'), null);
   assert.equal(readSharedInput(page + '#title=Unrelated'), null);

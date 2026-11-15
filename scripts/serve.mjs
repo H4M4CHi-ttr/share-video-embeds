@@ -12,6 +12,7 @@ const types = {
   svg: 'image/svg+xml',
   webmanifest: 'application/manifest+json; charset=utf-8',
   png: 'image/png',
+  jpg: 'image/jpeg',
 };
 
 http.createServer(async (request, response) => {

@@ -18,13 +18,14 @@ function sharedFields(raw, allowed) {
 
 export function readSharedInput(href) {
   const url = new URL(href);
-  const fragment = sharedFields(url.hash, ['text', 'url']);
+  const fragment = sharedFields(url.hash, ['text', 'url', 'title']);
   const query = sharedFields(url.search, ['text', 'url', 'title']);
-  const entries = fragment.entries.length ? fragment.entries : query.entries;
+  const fromFragment = fragment.entries.some(([field]) => field !== 'title');
+  const entries = fromFragment ? fragment.entries : query.entries;
   if (!entries.length) return null;
 
   // Preserve the original spelling and order of unrelated URL fields.
-  if (fragment.entries.length) url.hash = fragment.rest ? '#' + fragment.rest : '';
+  if (fromFragment) url.hash = fragment.rest ? '#' + fragment.rest : '';
   if (query.entries.length) url.search = query.rest ? '?' + query.rest : '';
   const cleanUrl = url.href;
 
@@ -32,6 +33,10 @@ export function readSharedInput(href) {
   let suppliedTitle = '';
   let textTitle = '';
   for (const [field, value] of entries) {
+    if (fromFragment && field === 'title') {
+      suppliedTitle ||= value.trim();
+      continue;
+    }
     let firstUrlIndex;
     for (const match of value.matchAll(/\S+/gu)) {
       let token = match[0];

@@ -6,7 +6,25 @@
   <meta name="referrer" content="strict-origin">
   <meta name="description" content="YouTube動画をX（旧Twitter）にプレイヤー付きで投稿するためのリンク変換ツール。URLを貼り付けると、変換結果をコピーしたりXの投稿画面に渡したりできます。Xでの表示・再生や今後の動作を保証するものではありません。">
   <meta name="theme-color" content="#1758d6">
-  <title>Share Video Embeds</title>
+  <title>Share Video Embeds | X（旧Twitter）でYouTube動画をプレイヤー付きでシェア</title>
+  <link rel="canonical" href="https://h4m4chi-ttr.github.io/share-video-embeds/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Share Video Embeds">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:title" content="Share Video Embeds | X（旧Twitter）でYouTube動画をプレイヤー付きでシェア">
+  <meta property="og:description" content="YouTubeのURLを変換し、Xの投稿画面に渡します。">
+  <meta property="og:url" content="https://h4m4chi-ttr.github.io/share-video-embeds/">
+  <meta property="og:image" content="https://h4m4chi-ttr.github.io/share-video-embeds/social-card.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Share Video Embedsの名前と、Xの投稿内でYouTube動画を再生しているイメージ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Share Video Embeds | X（旧Twitter）でYouTube動画をプレイヤー付きでシェア">
+  <meta name="twitter:description" content="YouTubeのURLを変換し、Xの投稿画面に渡します。">
+  <meta name="twitter:image" content="https://h4m4chi-ttr.github.io/share-video-embeds/social-card.jpg">
+  <meta name="twitter:image:alt" content="Share Video Embedsの名前と、Xの投稿内でYouTube動画を再生しているイメージ">
   <link rel="icon" href="./favicon.svg">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
@@ -83,7 +101,11 @@
                 <a id="open-youtube" class="button secondary" target="_blank" rel="noopener noreferrer"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg><span data-i18n="open"></span></a>
                 <button type="button" id="load-player" class="button secondary" data-i18n="show" hidden disabled></button>
               </div>
-              <label class="post-title">
+              <label class="title-option">
+                <input id="include-title" type="checkbox" aria-controls="post-title-field" checked>
+                <span data-i18n="includeTitle"></span>
+              </label>
+              <label id="post-title-field" class="post-title">
                 <span data-i18n="postTitle"></span>
                 <input id="post-title" type="text" autocomplete="off" maxlength="512">
               </label>
@@ -125,6 +147,13 @@
             <h2 data-i18n="guideTitle"></h2>
             <ol class="quick-steps"><li data-i18n="stepPaste"></li><li data-i18n="stepCopy"></li><li data-i18n="stepPost"></li></ol>
           </section>
+          <details id="bookmarklet-setup" class="bookmarklet-setup">
+            <summary data-i18n="bookmarkletTitle"></summary>
+            <p data-i18n="bookmarkletHow"></p>
+            <a id="bookmarklet" class="button secondary" draggable="true"><svg class="action-icon" aria-hidden="true" focusable="false"><use href="#icon-external"></use></svg><span>Share Video Embeds</span></a>
+            <p id="bookmarklet-notice" class="bookmarklet-notice" role="status" hidden><strong data-i18n="bookmarkletNotice"></strong></p>
+            <p data-i18n="bookmarkletBar"></p>
+          </details>
           <details id="mobile-setup" class="mobile-setup">
             <summary data-i18n="mobileTitle"></summary>
             <h3>Android Chrome</h3>

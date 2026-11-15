@@ -1,11 +1,12 @@
 import { convertYouTubeUrl } from './youtube.mjs';
 import { buildEmbedUrl, initialPlayback, updatePlayback } from './player.mjs';
 import {
-  iosShortcutLink, readTrackingPreference, saveTrackingPreference,
+  iosShortcutLink, readTrackingPreference, saveTrackingPreference, readTitlePreference, saveTitlePreference,
   readAutoPreviewPreference, saveAutoPreviewPreference, hasPrivacyAgreement, savePrivacyAgreement,
 } from './settings.mjs';
 import { strings } from './i18n.mjs';
 import { readSharedInput } from './shared-input.mjs';
+import { createBookmarklet } from './bookmarklet.mjs';
 
 const byId = id => document.getElementById(id);
 const input = byId('video-url');
@@ -15,6 +16,8 @@ const host = byId('player-host');
 const previewPanel = byId('preview-panel');
 const autoPreview = byId('auto-preview');
 const postTitle = byId('post-title');
+const includeTitle = byId('include-title');
+const bookmarklet = byId('bookmarklet');
 const previewTest = document.documentElement.dataset.previewTest === 'true'
   && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 let storage;
@@ -39,12 +42,14 @@ let openedFromShare = false;
 let installDismissed = false;
 let policyAccepted = !previewTest || hasPrivacyAgreement(storage);
 strip.checked = readTrackingPreference(storage);
+includeTitle.checked = readTitlePreference(storage);
 autoPreview.checked = previewTest && readAutoPreviewPreference(storage);
 
 function translate() {
   const t = strings[language];
   document.documentElement.lang = language;
-  document.title = 'Share Video Embeds';
+  document.title = 'Share Video Embeds | ' + t.subtitle;
+  bookmarklet.href = createBookmarklet(new URL('./', location.href).href, t.bookmarkletWrongPage);
   for (const id of ['privacy-link', 'consent-privacy-link']) {
     byId(id).href = './privacy.html#' + language;
   }
@@ -78,13 +83,14 @@ function renderConversion() {
   byId('removed-info').textContent = !strip.checked ? t.trackingKept : converted.removed.length ? t.removed + ': ' + converted.removed.join(', ') : t.noneRemoved;
 }
 function renderXShare() {
+  byId('post-title-field').hidden = !includeTitle.checked;
   const share = byId('share-x');
   if (!converted) {
     share.removeAttribute('href');
     return;
   }
   const intent = new URL('https://x.com/intent/tweet');
-  if (postTitle.value.trim()) intent.searchParams.set('text', postTitle.value.trim());
+  if (includeTitle.checked && postTitle.value.trim()) intent.searchParams.set('text', postTitle.value.trim());
   intent.searchParams.set('url', converted.url);
   share.href = intent.href;
 }
@@ -315,6 +321,15 @@ byId('copy').addEventListener('click', async () => {
   renderNotice();
 });
 postTitle.addEventListener('input', renderXShare);
+includeTitle.addEventListener('change', () => {
+  const saved = saveTitlePreference(storage, includeTitle.checked);
+  renderXShare();
+  if (!saved) { noticeKey = 'storageFailed'; renderNotice(); }
+});
+bookmarklet.addEventListener('click', event => {
+  event.preventDefault();
+  byId('bookmarklet-notice').hidden = false;
+});
 const shareButton = byId('share');
 shareButton.hidden = typeof navigator.share !== 'function';
 shareButton.addEventListener('click', async () => {

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AUTO_PREVIEW_KEY, PRIVACY_KEY, PRIVACY_VERSION } from '../docs/settings.mjs';
+import { AUTO_PREVIEW_KEY, PRIVACY_KEY, PRIVACY_VERSION, TITLE_KEY } from '../docs/settings.mjs';
 
 class Element extends EventTarget {
   constructor(tag = '') { super(); this.tag = tag; this.value = ''; this.checked = false; this.hidden = false; this.children = []; this.dataset = {}; this.classList = { toggle() {} }; }
@@ -21,7 +21,7 @@ class Element extends EventTarget {
 const origin = 'http://127.0.0.1:5188/share-video-embeds/';
 const publicOrigin = 'https://h4m4chi-ttr.github.io/share-video-embeds/';
 let serial = 0;
-async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true, device = {}, standalone = false } = {}) {
+async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true, device = {}, standalone = false, titleSetting = null } = {}) {
   t.mock.timers.enable({ apis: ['setTimeout'] });
   const elements = new Map();
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
@@ -34,7 +34,7 @@ async function mount(t, { href = origin, share, playerApi = true, previewTest = 
   const metadata = t.mock.method(globalThis, 'fetch', () => assert.fail('Unexpected metadata request'));
   window.history = { state: { keep: true }, replaceState(state, _title, url) { assert.deepEqual(state, this.state); location.href = url; } };
   const removed = [];
-  const preferences = new Map([[AUTO_PREVIEW_KEY, autoPreview ? 'true' : null], [PRIVACY_KEY, accepted ? PRIVACY_VERSION : null]]);
+  const preferences = new Map([[AUTO_PREVIEW_KEY, autoPreview ? 'true' : null], [PRIVACY_KEY, accepted ? PRIVACY_VERSION : null], [TITLE_KEY, titleSetting]]);
   window.localStorage = {
     getItem(key) { return preferences.get(key) ?? null; },
     setItem(key, value) { preferences.set(key, value); saved.push([key, value]); },
@@ -348,6 +348,49 @@ test('canceling the share sheet leaves feedback clear', async t => {
   ui.get('share').fire('click');
   await ui.tick(0);
   assert.equal(ui.get('notice').textContent, '');
+});
+
+test('X title sharing is on by default and can be hidden and saved', async t => {
+  const input = new URLSearchParams({ title: '共有の曲名', url: 'https://youtu.be/b7xXmTfcGMQ' });
+  const ui = await mount(t, { href: publicOrigin + '?' + input });
+  const includeTitle = ui.get('include-title');
+  const draft = () => new URL(ui.get('share-x').href).searchParams;
+  assert.equal(includeTitle.checked, true);
+  assert.equal(ui.get('post-title-field').hidden, false);
+  assert.equal(draft().get('text'), '共有の曲名');
+
+  includeTitle.checked = false;
+  includeTitle.fire('change');
+  assert.equal(ui.get('post-title-field').hidden, true);
+  assert.equal(draft().has('text'), false);
+  assert.equal(draft().get('url'), 'https://www.youtube.com/live/b7xXmTfcGMQ');
+  assert.deepEqual(ui.saved.at(-1), [TITLE_KEY, 'false']);
+
+  includeTitle.checked = true;
+  includeTitle.fire('change');
+  assert.equal(ui.get('post-title-field').hidden, false);
+  assert.equal(draft().get('text'), '共有の曲名');
+  assert.deepEqual(ui.saved.at(-1), [TITLE_KEY, 'true']);
+});
+
+test('saved X title setting stays off after a bookmarklet share', async t => {
+  const input = new URLSearchParams({ text: 'https://youtu.be/-OkrC6h2H5k', title: 'Video title' });
+  const ui = await mount(t, { href: publicOrigin + '#' + input, titleSetting: 'false' });
+  assert.equal(ui.get('post-title').value, 'Video title');
+  assert.equal(ui.get('include-title').checked, false);
+  assert.equal(ui.get('post-title-field').hidden, true);
+  assert.equal(new URL(ui.get('share-x').href).searchParams.has('text'), false);
+});
+
+test('clicking the bookmarklet shows registration guidance in the converter', async t => {
+  const ui = await mount(t, { href: publicOrigin });
+  ui.get('bookmarklet-notice').hidden = true;
+  const link = ui.get('bookmarklet');
+  assert.match(link.href, /^javascript:/u);
+  const click = new Event('click', { cancelable: true });
+  link.dispatchEvent(click);
+  assert.equal(click.defaultPrevented, true);
+  assert.equal(ui.get('bookmarklet-notice').hidden, false);
 });
 
 test('the direct iPadOS install bar follows the selected shortcut language and hides on share', async t => {

@@ -11,10 +11,14 @@ Paste a YouTube URL and select “Share on X” to open the composer. You can al
 ## How to use
 
 1. Paste a YouTube URL or send a video from your device’s share menu.
-2. Select “Share on X”. The composer receives the converted URL and the title from your shared input or from the title field.
+2. Select “Share on X”. The composer receives the converted URL. When title sharing is on, it also receives the shared or entered title.
 3. Review the draft and post it on X. Use “Copy URL for X” to copy just the converted URL.
 
-Edit the optional post title in the app. Leaving the title blank shares only the converted URL.
+Edit the optional post title in the app. Including the title is on by default. Turn it off to hide the title field and share just the URL. The app remembers your choice.
+
+## Computer (bookmarklet)
+
+Open “Share from a computer (bookmarklet)” and drag the “Share Video Embeds” button to your bookmarks bar. Select the saved bookmark on a YouTube video page to open the tool in a new tab with the video URL and title.
 
 ## Android
 
@@ -84,7 +88,7 @@ Run `npm run build:preview` followed by `npm start` to inspect the local test in
 
 ## Privacy and preferences
 
-Conversion runs locally. The public build stores language and tracking-parameter removal preferences. The local test build also stores the policy agreement and a chosen automatic preview setting. [Privacy policy and terms](docs/privacy.html#en)
+Conversion runs locally. The public build saves your language, tracking removal, and choice to include titles when sharing on X. The local test build also stores the policy agreement and a chosen automatic preview setting. [Privacy policy and terms](docs/privacy.html#en)
 
 Existing preference keys:
 - `youtube-live-link-pages.language`

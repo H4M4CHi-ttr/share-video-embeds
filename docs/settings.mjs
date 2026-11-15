@@ -1,4 +1,5 @@
 export const TRACKING_KEY = 'youtube-live-link-pages.strip-tracking';
+export const TITLE_KEY = 'youtube-live-link-pages.include-title';
 export const AUTO_PREVIEW_KEY = 'youtube-live-link-pages.auto-preview';
 export const PRIVACY_KEY = 'youtube-live-link-pages.privacy-agreement';
 export const PRIVACY_VERSION = '1';
@@ -42,6 +43,19 @@ export function saveTrackingPreference(storage, enabled) {
   try {
     if (!storage) return false;
     storage.setItem(TRACKING_KEY, String(enabled));
+    return true;
+  } catch { return false; }
+}
+
+export function readTitlePreference(storage) {
+  try { return storage?.getItem(TITLE_KEY) !== 'false'; }
+  catch { return true; }
+}
+
+export function saveTitlePreference(storage, enabled) {
+  try {
+    if (!storage) return false;
+    storage.setItem(TITLE_KEY, String(enabled));
     return true;
   } catch { return false; }
 }
