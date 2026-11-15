@@ -8,7 +8,8 @@ A static, bilingual YouTube URL converter and real iframe playback check for Git
 - Converts watch, youtu.be, shorts, live and embed URLs to `https://www.youtube.com/live/VIDEO_ID`.
 - Tracking removal is **OFF by default**. The ON/OFF choice is saved in localStorage and restored on the next visit. Storage failures do not break conversion.
 - Preserves timestamps, playlist information and unknown queries in the copied link. Known tracking queries are removed only when requested.
-- Loads an actual YouTube iframe on demand. Nothing connects to YouTube until “Load player” is selected.
+- Converts valid input immediately and loads the YouTube iframe automatically after a 350 ms pause in typing. Playback still requires a user action.
+- The example button uses b7xXmTfcGMQ in Japanese and -OkrC6h2H5k in English. Switching language does not overwrite an entered URL.
 - Japanese/English UI, mobile layout, copy, retry, close and muted playback test.
 - Marks playback as confirmed only after a YouTube IFrame Player API `PLAYING` event for the expected video ID. A loaded iframe or `onReady` event is **not** a pass.
 - Differentiates embedding restriction (101/150), unavailable/private video (100), referrer/client identification (153), other player failures and unavailable API communication.
@@ -22,7 +23,7 @@ The preview tests one video only. It translates valid timestamps to the embed st
 A missing or blocked API script is inconclusive. The iframe remains visible for manual inspection; no false “embedding prohibited” verdict is shown. If scripts or privacy extensions block communication, reload or use the player directly.
 
 ## Privacy and preferences
-Conversion is local. When loading the iframe, the browser connects directly to YouTube and its normal data practices apply. This is not a claim of anonymous YouTube playback.
+Conversion is local. After valid input settles, the iframe loads automatically and the browser connects directly to YouTube and its normal data practices apply. This is not a claim of anonymous YouTube playback.
 Only language and the tracking-removal preference are stored by this app:
 - `youtube-live-link-pages.language`
 - `youtube-live-link-pages.strip-tracking`

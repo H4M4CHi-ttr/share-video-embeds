@@ -8,7 +8,6 @@ const input = byId('video-url');
 const strip = byId('strip-tracking');
 const output = byId('converted-url');
 const host = byId('player-host');
-const example = 'https://www.youtube.com/watch?v=sjRYYBZHGWA&si=example&t=20';
 let storage;
 try { storage = window.localStorage; } catch { storage = null; }
 let language = navigator.language.startsWith('ja') ? 'ja' : 'en';
@@ -18,6 +17,7 @@ let playback = initialPlayback();
 let player = null;
 let sequence = 0;
 let watchdog;
+let previewTimer;
 let apiPromise;
 let noticeKey = '';
 let inputError = '';
@@ -75,6 +75,7 @@ function emit(event, token) {
   renderPlayback();
 }
 function unload() {
+  clearTimeout(previewTimer);
   sequence++;
   clearTimeout(watchdog);
   if (player) { try { player.destroy(); } catch { /* Removing the frame also stops playback. */ } }
@@ -93,12 +94,17 @@ function resetInput() {
   noticeKey = '';
   renderConversion(); renderError(); renderNotice();
 }
-function convert() {
+function convert(showErrors = true) {
   unload();
+  converted = null;
   inputError = ''; noticeKey = '';
-  try { converted = convertYouTubeUrl(input.value, strip.checked); }
-  catch (error) { converted = null; inputError = error.message === 'ambiguous-url' ? 'ambiguous' : 'invalid'; }
+  if (input.value.trim()) {
+    try { converted = convertYouTubeUrl(input.value, strip.checked); }
+    catch (error) { if (showErrors) inputError = error.message === 'ambiguous-url' ? 'ambiguous' : 'invalid'; }
+  }
   renderConversion(); renderError(); renderNotice();
+  // Avoid repeated YouTube connections while a URL is still being edited.
+  if (converted) previewTimer = setTimeout(loadPlayer, 350);
 }
 
 function loadApi() {
@@ -169,9 +175,10 @@ async function loadPlayer() {
 }
 
 byId('converter-form').addEventListener('submit', event => { event.preventDefault(); convert(); });
-input.addEventListener('input', resetInput);
+input.addEventListener('input', () => convert(false));
+input.addEventListener('blur', () => { if (input.value.trim() && !converted) convert(); });
 byId('clear').addEventListener('click', () => { input.value = ''; resetInput(); input.focus(); });
-byId('example').addEventListener('click', () => { input.value = example; convert(); });
+byId('example').addEventListener('click', () => { input.value = strings[language].exampleUrl; convert(); });
 strip.addEventListener('change', () => {
   const saved = saveTrackingPreference(storage, strip.checked);
   if (converted) convert();
