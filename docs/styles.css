@@ -246,11 +246,12 @@ footer{margin-top:42px;padding:23px 0 30px;border-top:1px solid var(--line);disp
   gap:9px 14px;
   padding:4px 11px 11px;
 }
-.start-time-fields,.start-time-actions{display:flex;align-items:center;gap:7px}
+.start-time-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;width:min(100%,206px)}
+.start-time-actions{display:flex;align-items:center;gap:7px}
 .start-time-fields label{font-size:12px;color:var(--muted)}
 .start-time-fields input {
   display:block;
-  width:64px;
+  width:100%;
   min-height:40px;
   margin-top:4px;
   padding:6px 8px;

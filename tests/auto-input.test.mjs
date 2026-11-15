@@ -349,6 +349,36 @@ test('manual start time edits validate, step to zero, and clear independently of
   assert.equal(current().href, 'https://www.youtube.com/live/-OkrC6h2H5k?t=85');
 });
 
+test('hour start times are prefilled and adjust across hour boundaries', async t => {
+  const ui = await mount(t, { href: publicOrigin });
+  const fields = () => ['start-hours', 'start-minutes', 'start-seconds'].map(id => ui.get(id).value);
+  const currentTime = () => new URL(ui.get('converted-url').value).searchParams.get('t');
+
+  ui.input('https://youtu.be/b7xXmTfcGMQ#t=1h2m3s');
+  assert.deepEqual(fields(), ['1', '2', '03']);
+  assert.equal(ui.get('start-time-value').textContent, '1:02:03');
+  assert.equal(currentTime(), '3723');
+
+  ui.get('start-hours').value = '0';
+  ui.get('start-minutes').value = '59';
+  ui.get('start-seconds').value = '55';
+  ui.get('start-seconds').fire('input');
+  ui.get('start-forward').fire('click');
+  assert.deepEqual(fields(), ['1', '0', '05']);
+  assert.equal(ui.get('start-time-value').textContent, '1:00:05');
+  assert.equal(currentTime(), '3605');
+  ui.get('start-back').fire('click');
+  assert.equal(currentTime(), '3595');
+
+  ui.get('start-clear').fire('click');
+  assert.deepEqual(fields(), ['', '', '']);
+  ui.get('start-hours').value = '2';
+  ui.get('start-hours').fire('input');
+  assert.equal(currentTime(), '7200');
+  const shared = new URL(ui.get('share-x').href).searchParams.get('url');
+  assert.equal(new URL(shared).searchParams.get('t'), '7200');
+});
+
 test('text shares put the converted link at the start of the viewport', async t => {
   const text = encodeURIComponent('Shared title\nhttps://youtu.be/b7xXmTfcGMQ?t=20');
   const ui = await mount(t, { href: publicOrigin + '?text=' + text });

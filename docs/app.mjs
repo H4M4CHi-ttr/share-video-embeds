@@ -12,6 +12,7 @@ const byId = id => document.getElementById(id);
 const input = byId('video-url');
 const strip = byId('strip-tracking');
 const output = byId('converted-url');
+const startHours = byId('start-hours');
 const startMinutes = byId('start-minutes');
 const startSeconds = byId('start-seconds');
 const startTimeError = byId('start-time-error');
@@ -86,9 +87,7 @@ function renderConversion() {
   output.value = converted.url;
   byId('open-youtube').href = converted.url;
   const start = readYouTubeStartTime(converted.url);
-  byId('start-time-value').textContent = start === null
-    ? t.startUnset
-    : Math.floor(start / 60) + ':' + String(start % 60).padStart(2, '0');
+  byId('start-time-value').textContent = start === null ? t.startUnset : formatStartTime(start);
   byId('start-back').disabled = start === null || start === 0;
   byId('start-forward').disabled = start === MAX_YOUTUBE_SECONDS;
   byId('removed-info').textContent = !strip.checked ? t.trackingKept : converted.removed.length ? t.removed + ': ' + converted.removed.join(', ') : t.noneRemoved;
@@ -160,9 +159,17 @@ function unload() {
   playback = initialPlayback();
   renderPlayback();
 }
+function formatStartTime(start) {
+  const hours = Math.floor(start / 3600);
+  const minutes = String(Math.floor(start / 60) % 60);
+  const seconds = String(start % 60).padStart(2, '0');
+  return hours ? hours + ':' + minutes.padStart(2, '0') + ':' + seconds : minutes + ':' + seconds;
+}
+
 function syncStartFields() {
   const start = converted ? readYouTubeStartTime(converted.url) : null;
-  startMinutes.value = start === null ? '' : String(Math.floor(start / 60));
+  startHours.value = start === null ? '' : String(Math.floor(start / 3600));
+  startMinutes.value = start === null ? '' : String(Math.floor(start / 60) % 60);
   startSeconds.value = start === null ? '' : String(start % 60).padStart(2, '0');
   startTimeError.hidden = true;
 }
@@ -179,13 +186,13 @@ function setStartTime(seconds) {
 }
 
 function editStartTime() {
-  const minutes = startMinutes.value.trim().normalize('NFKC');
-  const seconds = startSeconds.value.trim().normalize('NFKC');
-  const total = Number(minutes) * 60 + Number(seconds);
-  const valid = /^\d*$/u.test(minutes) && /^\d*$/u.test(seconds)
+  const values = [startHours, startMinutes, startSeconds].map(field => field.value.trim().normalize('NFKC'));
+  const [hours, minutes, seconds] = values.map(Number);
+  const total = hours * 3600 + minutes * 60 + seconds;
+  const valid = values.every(value => /^\d*$/u.test(value))
     && Number.isSafeInteger(total) && total <= MAX_YOUTUBE_SECONDS;
   startTimeError.hidden = valid;
-  if (valid) setStartTime(minutes || seconds ? total : null);
+  if (valid) setStartTime(values.some(Boolean) ? total : null);
 }
 
 function stepStartTime(delta) {
@@ -410,7 +417,7 @@ shareButton.addEventListener('click', async () => {
     renderNotice();
   }
 });
-for (const field of [startMinutes, startSeconds]) {
+for (const field of [startHours, startMinutes, startSeconds]) {
   field.addEventListener('input', editStartTime);
   field.addEventListener('change', () => {
     if (startTimeError.hidden) syncStartFields();

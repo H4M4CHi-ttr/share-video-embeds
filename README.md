@@ -16,7 +16,7 @@ Paste a YouTube URL and select “Share on X” to open the composer. You can al
 
 Edit the optional post title in the app. Including the title is on by default. Turn it off to hide the title field and share just the URL. The app remembers your choice.
 
-Open “Start time” in the result to enter minutes and seconds, step by 10 seconds, or clear the timestamp. When a pasted or shared link specifies a start time, the fields are prefilled.
+Open “Start time” in the result to enter hours, minutes, and seconds, step by 10 seconds, or clear the timestamp. When a pasted or shared link specifies a start time, the fields are prefilled.
 
 ## Computer (bookmarklet)
 
