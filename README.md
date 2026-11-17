@@ -22,6 +22,12 @@ Open “Start time” in the result to enter hours, minutes, and seconds, step b
 
 Open “Share from a computer (bookmarklet)” and drag the “Share Video Embeds” button to your bookmarks bar. Select the saved bookmark on a YouTube video page to open the tool in a new tab with the video URL and title.
 
+## Computer (User Script)
+
+Open “Share from a computer (User Script)” in the tool and add the script with a userscript manager. On desktop YouTube, open the share menu and select “X (Embeds)” next to the standard X button. Share Video Embeds opens in a new tab with the video link and any selected start time.
+
+The [standalone User Script](docs/share-video-embeds.user.js) is the source for Greasy Fork. Greasy Fork can sync it from the raw GitHub URL. [Greasy Fork external-script policy](https://greasyfork.org/en/help/external-scripts)
+
 ## Android
 
 1. Open the [tool](https://h4m4chi-ttr.github.io/share-video-embeds/) in Chrome on Android.

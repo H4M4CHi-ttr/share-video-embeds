@@ -22,6 +22,12 @@ YouTubeのURLを貼り付け、「Xでシェア」を押すと投稿画面が開
 
 「PCから共有する（ブックマークレット）」を開き、「Share Video Embeds」ボタンをブックマークバーにドラッグ＆ドロップします。YouTubeの動画ページで登録したブックマークを押すと、動画のURLとタイトルを取り込んだツールが新しいタブで開きます。
 
+## PC（User Script）
+
+ツールの「PCから共有する (User Script)」を開き、管理用のブラウザ拡張機能にスクリプトを追加します。PC版YouTubeの共有メニューで、標準の「X」の隣にある「X (埋め込み)」を押すと、動画のリンクと指定した開始位置を引き継いでツールが新しいタブに開きます。
+
+[User Scriptのソース](docs/share-video-embeds.user.js)は単独で動きます。Greasy Forkの公開時は、GitHubのRaw URLを同期元に指定できます。[Greasy Forkの外部スクリプトポリシー](https://greasyfork.org/ja/help/external-scripts)
+
 ## Android
 
 1. AndroidのChromeで[ツール](https://h4m4chi-ttr.github.io/share-video-embeds/)を開きます。
