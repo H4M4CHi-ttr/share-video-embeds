@@ -21,7 +21,7 @@ class Element extends EventTarget {
 const origin = 'http://127.0.0.1:5188/share-video-embeds/';
 const publicOrigin = 'https://h4m4chi-ttr.github.io/share-video-embeds/';
 let serial = 0;
-async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true, device = {}, standalone = false, titleSetting = null } = {}) {
+async function mount(t, { href = origin, share, playerApi = true, previewTest = true, autoPreview = false, accepted = true, device = {}, standalone = false, titleSetting = null, languageSetting = null } = {}) {
   t.mock.timers.enable({ apis: ['setTimeout'] });
   const elements = new Map();
   const get = id => { if (!elements.has(id)) elements.set(id, new Element()); return elements.get(id); };
@@ -34,7 +34,7 @@ async function mount(t, { href = origin, share, playerApi = true, previewTest = 
   const metadata = t.mock.method(globalThis, 'fetch', () => assert.fail('Unexpected metadata request'));
   window.history = { state: { keep: true }, replaceState(state, _title, url) { assert.deepEqual(state, this.state); location.href = url; } };
   const removed = [];
-  const preferences = new Map([[AUTO_PREVIEW_KEY, autoPreview ? 'true' : null], [PRIVACY_KEY, accepted ? PRIVACY_VERSION : null], [TITLE_KEY, titleSetting]]);
+  const preferences = new Map([[AUTO_PREVIEW_KEY, autoPreview ? 'true' : null], [PRIVACY_KEY, accepted ? PRIVACY_VERSION : null], [TITLE_KEY, titleSetting], ['youtube-live-link-pages.language', languageSetting]]);
   window.localStorage = {
     getItem(key) { return preferences.get(key) ?? null; },
     setItem(key, value) { preferences.set(key, value); saved.push([key, value]); },
@@ -46,7 +46,7 @@ async function mount(t, { href = origin, share, playerApi = true, previewTest = 
     playVideo() { assert.fail('A script attempted to play the video'); }
   }};
   globalThis.window = window;
-  globalThis.document = { getElementById: get, createElement: tag => new Element(tag), querySelectorAll: () => [], documentElement: { dataset: { previewTest: previewTest ? 'true' : '' } }, head: scripts };
+  globalThis.document = { getElementById: get, querySelector: selector => get(selector), createElement: tag => new Element(tag), querySelectorAll: () => [], documentElement: { dataset: { previewTest: previewTest ? 'true' : '' } }, head: scripts };
   globalThis.location = location;
   const navigator = { language: 'ja', ...device, clipboard: { readText() { assert.fail('Clipboard was read without user action'); }, async writeText(value) { clipboardWrites.push(value); } } };
   if (share !== null) navigator.share = share ?? (async data => { shareCalls.push(data); });
@@ -556,4 +556,46 @@ test('copy stays available when the Web Share API is missing', async t => {
   assert.equal(ui.get('share').hidden, true);
   ui.get('copy').fire('click');
   assert.deepEqual(ui.clipboardWrites, ['https://www.youtube.com/live/b7xXmTfcGMQ']);
+});
+
+
+test('direct language pages keep their language regardless of browser language', async t => {
+  const ui = await mount(t, { href: publicOrigin, previewTest: false, device: { language: 'en-US' } });
+  assert.equal(ui.get('language').value, 'ja');
+  assert.equal(ui.get('link[rel="canonical"]').href, publicOrigin);
+});
+
+test('the English entry uses English metadata, examples and sharing without reloading', async t => {
+  const ui = await mount(t, { href: publicOrigin + 'en.html', previewTest: false });
+  assert.equal(ui.get('language').value, 'en');
+  ui.input('https://youtu.be/b7xXmTfcGMQ?t=3723');
+  ui.get('post-title').value = 'Keep my draft';
+  ui.get('post-title').fire('input');
+  ui.get('language').value = 'ja';
+  ui.get('language').fire('change');
+  assert.equal(location.href, publicOrigin);
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/b7xXmTfcGMQ?t=3723');
+  assert.equal(ui.get('post-title').value, 'Keep my draft');
+  assert.equal(ui.get('link[rel="canonical"]').href, publicOrigin);
+  assert.ok(ui.saved.some(([key, value]) => key === 'youtube-live-link-pages.language' && value === 'ja'));
+  ui.get('language').value = 'en';
+  ui.get('language').fire('change');
+  assert.equal(location.href, publicOrigin + 'en.html');
+  assert.equal(ui.get('link[rel="canonical"]').href, publicOrigin + 'en.html');
+  assert.match(document.title, /Share YouTube/);
+});
+
+test('a saved language still applies when a shared URL opens the converter', async t => {
+  const ui = await mount(t, {
+    href: origin + '#text=' + encodeURIComponent('https://youtu.be/-OkrC6h2H5k?t=75'),
+    previewTest: false, languageSetting: 'en',
+  });
+  assert.equal(ui.get('language').value, 'en');
+  assert.equal(ui.get('converted-url').value, 'https://www.youtube.com/live/-OkrC6h2H5k?t=75');
+  assert.equal(location.href, origin);
+});
+
+test('installed app launches retain their saved language', async t => {
+  const ui = await mount(t, { previewTest: false, standalone: true, languageSetting: 'en' });
+  assert.equal(ui.get('language').value, 'en');
 });

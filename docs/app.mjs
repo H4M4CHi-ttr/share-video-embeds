@@ -26,8 +26,12 @@ const previewTest = document.documentElement.dataset.previewTest === 'true'
   && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 let storage;
 try { storage = window.localStorage; } catch { storage = null; }
-let language = navigator.language.startsWith('ja') ? 'ja' : 'en';
-try { const saved = storage?.getItem('youtube-live-link-pages.language'); if (['ja','en'].includes(saved)) language = saved; } catch { /* Preference is optional. */ }
+let language = location.pathname.endsWith('/en.html') ? 'en' : 'ja';
+// Public language URLs stay stable. Shared links and the installed app use the saved preference.
+if (language === 'ja' && (readSharedInput(location.href) || window.matchMedia?.('(display-mode: standalone)').matches)) {
+  language = navigator.language.startsWith('ja') ? 'ja' : 'en';
+  try { const saved = storage?.getItem('youtube-live-link-pages.language'); if (['ja', 'en'].includes(saved)) language = saved; } catch { /* Preference is optional. */ }
+}
 let converted = null;
 // The original link supplies the start time until the user sets or clears it.
 let startOverride;
@@ -55,6 +59,20 @@ function translate() {
   const t = strings[language];
   document.documentElement.lang = language;
   document.title = 'Share Video Embeds | ' + t.subtitle;
+  const pageUrl = 'https://h4m4chi-ttr.github.io/share-video-embeds/' + (language === 'en' ? 'en.html' : '');
+  document.querySelector('link[rel="canonical"]').href = pageUrl;
+  const metadata = {
+    description: t.metaDescription,
+    'og:title': document.title, 'twitter:title': document.title,
+    'og:description': t.metaDescription, 'twitter:description': t.metaDescription,
+    'og:url': pageUrl,
+    'og:locale': language === 'en' ? 'en_US' : 'ja_JP',
+    'og:locale:alternate': language === 'en' ? 'ja_JP' : 'en_US',
+    'og:image:alt': t.socialImageAlt, 'twitter:image:alt': t.socialImageAlt,
+  };
+  for (const [name, content] of Object.entries(metadata)) {
+    document.querySelector('meta[name="' + name + '"], meta[property="' + name + '"]').content = content;
+  }
   bookmarklet.href = createBookmarklet(new URL('./', location.href).href, t.bookmarkletWrongPage);
   for (const id of ['privacy-link', 'consent-privacy-link']) {
     byId(id).href = './privacy.html#' + language;
@@ -378,6 +396,9 @@ strip.addEventListener('change', () => {
 });
 byId('language').addEventListener('change', event => {
   language = event.target.value;
+  const nextPage = new URL(location.href);
+  nextPage.pathname = new URL(language === 'en' ? './en.html' : './', location.href).pathname;
+  window.history.replaceState(window.history.state, '', nextPage.href);
   try { storage?.setItem('youtube-live-link-pages.language', language); } catch { /* Language still changes in this tab. */ }
   translate();
 });

@@ -89,6 +89,14 @@ ONにすると si・pp・utm_* などを除去。開始時刻やプレイリス�
 
 ショートカットのフラグメントはHTTPリクエストに含まれません。Service Workerがまだページを制御していない初回などは、Androidが渡したクエリがGitHub PagesへのHTTPリクエストに含まれます。処理後は共有パラメータをアドレス欄から除きます。
 
+## 検索エンジンへの登録
+
+ビルド時に、日本語の `index.html` と英語の `en.html` を同じテンプレートと翻訳データから生成します。本文、ページ説明、正規URL、相互の言語リンク、SNS用メタ情報を最初のHTMLに含めます。`sitemap.xml` には日本語版・英語版・プライバシーポリシーを記載しています。直接開くとURLに対応する言語が表示され、共有経由とインストール済みアプリの起動時には保存済みの言語設定が反映されます。
+
+Google Search Consoleで「URLプレフィックス」を選び、`https://h4m4chi-ttr.github.io/share-video-embeds/` を登録します。所有権確認の「HTMLタグ」に表示された `google-site-verification` を `docs/index.html` の `<head>` 内に追加してデプロイし、「確認」を押します。確認後もタグを残してください。続いて「サイトマップ」で `sitemap.xml` を送信し、「URL検査」で日本語版と英語版のインデックス登録をリクエストします。確認タグはビルド時に両言語のHTMLへ引き継がれます。[Googleの所有権確認手順](https://support.google.com/webmasters/answer/9008080?hl=ja)
+
+このプロジェクト内に `robots.txt` を置いてもクローラーの制御には使われません。有効なのはアカウント側のPagesサイトにある `https://h4m4chi-ttr.github.io/robots.txt` です。このツールのサイトマップはSearch Consoleから送信できます。[Googleのrobots.txt配置ルール](https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt)
+
 ## ソースコード
 
 [GitHub](https://github.com/H4M4CHi-ttr/share-video-embeds) · [Development / Deployment](README.md#development)

@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { SHELL_FILES } from '../scripts/site-files.mjs';
+import { GENERATED_FILES, SHELL_FILES } from '../scripts/site-files.mjs';
 import { iosShortcutLink } from '../docs/settings.mjs';
 
 const root = new URL('https://h4m4chi-ttr.github.io/share-video-embeds/');
@@ -34,7 +34,7 @@ test('manifest starts in the project and shares into the existing page', async (
   }
   assert.ok(SHELL_FILES.includes('manifest.webmanifest'));
   assert.ok(SHELL_FILES.includes('privacy.html'));
-  for (const name of SHELL_FILES) await readFile(new URL(name, source));
+  for (const name of SHELL_FILES.filter(file => !GENERATED_FILES.includes(file))) await readFile(new URL(name, source));
 });
 
 test('iOS installation links match the selected language', () => {
@@ -93,9 +93,9 @@ test('cached app loads offline at the project URL with share fields and uses onl
   const sw = await worker();
   await sw.lifecycle('install');
   const query = '?title=Something&url=' + encodeURIComponent('https://youtu.be/b7xXmTfcGMQ?si=sensitive');
-  for (const page of ['', 'index.html']) {
+  for (const page of ['', 'index.html', 'en.html']) {
     const response = await sw.fetch(new URL(page + query, root).href);
-    assert.equal(await response.text(), root.pathname + 'index.html');
+    assert.equal(await response.text(), root.pathname + (page === 'en.html' ? 'en.html' : 'index.html'));
   }
   const js = await sw.fetch(new URL('shared-input.mjs', root).href, 'cors');
   assert.equal(await js.text(), root.pathname + 'shared-input.mjs');

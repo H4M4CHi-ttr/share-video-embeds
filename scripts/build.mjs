@@ -1,20 +1,24 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { SHELL_FILES, SITE_FILES } from './site-files.mjs';
+import { GENERATED_FILES, SHELL_FILES, SITE_FILES } from './site-files.mjs';
+import { renderHtml } from './render-html.mjs';
 
 const source = new URL('../docs/', import.meta.url);
 const target = new URL('../dist/', import.meta.url);
-const content = new Map(await Promise.all(SITE_FILES.map(async file => {
+const content = new Map(await Promise.all(SITE_FILES.filter(file => !GENERATED_FILES.includes(file)).map(async file => {
   const fileUrl = file === 'LICENSE' ? new URL('../LICENSE', import.meta.url) : new URL(file, source);
   return [file, await readFile(fileUrl)];
 })));
 const previewTest = process.argv.includes('--preview-test');
 const html = content.get('index.html').toString('utf8');
-if (previewTest) {
-  const previewHtml = html.replace('<html lang="ja">', '<html lang="ja" data-preview-test="true">')
-    .replace(/\s*<!-- Cloudflare Web Analytics -->[\s\S]*?<!-- End Cloudflare Web Analytics -->/u, '');
-  content.set('index.html', Buffer.from(previewHtml));
+for (const [language, file] of [['ja', 'index.html'], ['en', 'en.html']]) {
+  let rendered = renderHtml(html, language);
+  if (previewTest) {
+    rendered = rendered.replace('<html lang="' + language + '">', '<html lang="' + language + '" data-preview-test="true">')
+      .replace(/\s*<!-- Cloudflare Web Analytics -->[\s\S]*?<!-- End Cloudflare Web Analytics -->/u, '');
+  }
+  content.set(file, Buffer.from(rendered));
 }
 assert.match(html, /type="module" src="\.\/app.mjs"/);
 assert.match(html, /<link rel="manifest" href="\.\/manifest\.webmanifest">/);

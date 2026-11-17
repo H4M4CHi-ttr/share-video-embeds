@@ -118,6 +118,14 @@ npm start
 
 Open http://127.0.0.1:5188/share-video-embeds/. The local server uses the same subpath as GitHub Pages and serves loopback HTTP, which supports service worker registration. The build writes the static files and a versioned service worker into `dist/`. The preview server is development-only.
 
+## Search visibility
+
+The build renders Japanese at `index.html` and English at `en.html` from the same template and translations. Both include the visible text, descriptions, canonical URL, reciprocal language links, and social metadata in the initial HTML. `sitemap.xml` lists the two entry pages and the privacy page. Direct visits use the URL’s language. Shared links and installed-app launches retain the saved language preference.
+
+To register with Google Search Console, add the URL-prefix property `https://h4m4chi-ttr.github.io/share-video-embeds/`. Select HTML tag verification, add the provided `google-site-verification` tag inside the `<head>` of `docs/index.html`, and deploy. Keep the tag after verification. Submit `sitemap.xml`, then use URL Inspection to request indexing of the Japanese and English entry pages. The build copies the verification tag into both language versions. [Google ownership verification](https://support.google.com/webmasters/answer/9008080?hl=en)
+
+A project-level `robots.txt` would not control this site. Google reads `https://h4m4chi-ttr.github.io/robots.txt`, which belongs to the account-level Pages site. Sitemap submission works from this project’s URL-prefix property. [Google robots.txt location](https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt)
+
 ## Deployment
 
 GitHub Settings → Pages → Source: GitHub Actions.

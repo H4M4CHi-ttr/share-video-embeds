@@ -1,6 +1,7 @@
 // The build prepends CACHE_VERSION and SHELL_FILES.
 const scope = new URL(self.registration.scope);
 const index = new URL('index.html', scope);
+const english = new URL('en.html', scope);
 const cachePrefix = 'share-video-embeds-shell:' + scope.pathname + ':';
 const cacheName = cachePrefix + CACHE_VERSION;
 const assets = new Set(SHELL_FILES.map(file => new URL(file, scope).href));
@@ -33,10 +34,11 @@ self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   if (url.origin !== scope.origin) return;
 
-  const isEntryPage = url.pathname === scope.pathname || url.pathname === index.pathname;
+  const isEnglishPage = url.pathname === english.pathname;
+  const isEntryPage = url.pathname === scope.pathname || url.pathname === index.pathname || isEnglishPage;
   if (event.request.mode === 'navigate' && isEntryPage) {
     // Share parameters are read by the page. They never become cache keys.
-    event.respondWith(fromShell(index.href));
+    event.respondWith(fromShell(isEnglishPage ? english.href : index.href));
   } else if (assets.has(url.href)) {
     event.respondWith(fromShell(url.href));
   }
